@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payroll Tracker</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; color: #1a202c; }
+  header { background: #2d6a4f; color: white; padding: 16px 24px; display: flex; align-items: center; gap: 12px; }
+  header h1 { font-size: 1.3rem; font-weight: 600; }
+  .tabs { display: flex; background: #fff; border-bottom: 2px solid #e2e8f0; }
+  .tab { padding: 12px 24px; cursor: pointer; font-weight: 500; color: #718096; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all .2s; }
+  .tab.active { color: #2d6a4f; border-bottom-color: #2d6a4f; }
+  .tab:hover:not(.active) { color: #2d6a4f; background: #f0f4f8; }
+  .panel { display: none; padding: 24px; max-width: 960px; margin: 0 auto; }
+  .panel.active { display: block; }
+  .card { background: white; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+  .card h2 { font-size: 1rem; font-weight: 600; margin-bottom: 16px; color: #2d6a4f; }
+  label { display: block; font-size: .85rem; font-weight: 500; color: #4a5568; margin-bottom: 4px; margin-top: 12px; }
+  input, select { width: 100%; padding: 8px 12px; border: 1px solid #cbd5e0; border-radius: 6px; font-size: .95rem; }
+  input:focus, select:focus { outline: none; border-color: #2d6a4f; box-shadow: 0 0 0 3px rgba(45,106,79,.15); }
+  .btn { padding: 9px 18px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: .9rem; transition: background .2s; }
+  .btn-primary { background: #2d6a4f; color: white; }
+  .btn-primary:hover { background: #1b4332; }
+  .btn-danger { background: #fff0f0; color: #c53030; border: 1px solid #fed7d7; }
+  .btn-danger:hover { background: #fed7d7; }
+  .btn-secondary { background: #edf2f7; color: #2d3748; }
+  .btn-secondary:hover { background: #e2e8f0; }
+  .btn-sm { padding: 5px 10px; font-size: .8rem; }
+  .row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .row .col { flex: 1; min-width: 160px; }
+  table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+  th { background: #f7fafc; text-align: left; padding: 10px 12px; font-weight: 600; color: #4a5568; border-bottom: 2px solid #e2e8f0; }
+  td { padding: 10px 12px; border-bottom: 1px solid #e2e8f0; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #f7fafc; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: .75rem; font-weight: 600; }
+  .badge-green { background: #c6f6d5; color: #276749; }
+  .empty { text-align: center; padding: 32px; color: #a0aec0; font-size: .95rem; }
+  .week-label { font-size: .85rem; color: #718096; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .week-label input[type=date] { width: auto; }
+  .summary-total { font-size: 1.4rem; font-weight: 700; color: #2d6a4f; margin-top: 4px; }
+  .action-row { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; flex-wrap: wrap; }
+  .entry-table th, .entry-table td { padding: 8px 10px; }
+  .entry-table input, .entry-table select { padding: 5px 8px; font-size: .85rem; }
+  .history-week { border-left: 4px solid #2d6a4f; padding-left: 12px; margin-bottom: 20px; }
+  .history-week h3 { font-size: .95rem; font-weight: 600; margin-bottom: 8px; color: #2d3748; }
+  @media print {
+    .tabs, .action-row, .no-print { display: none !important; }
+    .panel { display: block !important; padding: 0; }
+    .card { box-shadow: none; border: 1px solid #e2e8f0; page-break-inside: avoid; }
+    body { background: white; }
+  }
+  .toast { position: fixed; bottom: 24px; right: 24px; background: #276749; color: white; padding: 12px 20px; border-radius: 8px; font-weight: 500; font-size: .9rem; opacity: 0; transition: opacity .3s; pointer-events: none; z-index: 999; }
+  .toast.show { opacity: 1; }
+  .export-btn { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.4); padding: 6px 14px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: .85rem; margin-left: auto; }
+  .export-btn:hover { background: rgba(255,255,255,0.3); }
+</style>
+</head>
+<body>
+
+<header>
+  <svg width="24" height="24" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M8 10h8M8 14h5"/></svg>
+  <h1>Payroll Tracker</h1>
+  <button class="export-btn" onclick="exportHTML()">⬇ Export HTML</button>
+</header>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('entry')">Weekly Entry</div>
+  <div class="tab" onclick="showTab('setup')">Employees & Plans</div>
+  <div class="tab" onclick="showTab('history')">History & Reports</div>
+</div>
+
+<!-- WEEKLY ENTRY -->
+<div id="tab-entry" class="panel active">
+  <div class="card">
+    <h2>Weekly Payroll Entry</h2>
+    <div class="week-label no-print">
+      <span>Week ending:</span>
+      <input type="date" id="weekDate">
+    </div>
+    <div id="entryTableWrap"></div>
+    <div class="action-row no-print">
+      <button class="btn btn-secondary" onclick="addEntryRow()">+ Add Row</button>
+      <button class="btn btn-primary" onclick="saveWeek()">Save Week</button>
+      <button class="btn btn-secondary" onclick="window.print()">🖨 Print</button>
+    </div>
+  </div>
+  <div class="card" id="weekSummaryCard" style="display:none">
+    <h2>This Week's Summary</h2>
+    <div id="weekSummary"></div>
+  </div>
+</div>
+
+<!-- SETUP -->
+<div id="tab-setup" class="panel">
+  <div class="card">
+    <h2>Employees</h2>
+    <div class="row" style="margin-bottom:12px">
+      <div class="col"><label>Name</label><input id="empName" placeholder="e.g. John Smith"></div>
+      <div class="col" style="display:flex;align-items:flex-end">
+        <button class="btn btn-primary" onclick="addEmployee()">Add Employee</button>
+      </div>
+    </div>
+    <table><thead><tr><th>Name</th><th>Actions</th></tr></thead>
+    <tbody id="empTable"><tr><td colspan="2" class="empty">No employees yet.</td></tr></tbody></table>
+  </div>
+  <div class="card">
+    <h2>Plans / Series</h2>
+    <div class="row" style="margin-bottom:12px">
+      <div class="col"><label>Plan / Series Name</label><input id="planName" placeholder="e.g. Series 1800"></div>
+      <div class="col" style="display:flex;align-items:flex-end">
+        <button class="btn btn-primary" onclick="addPlan()">Add Plan</button>
+      </div>
+    </div>
+    <table><thead><tr><th>Plan / Series</th><th>Actions</th></tr></thead>
+    <tbody id="planTable"><tr><td colspan="2" class="empty">No plans yet.</td></tr></tbody></table>
+  </div>
+  <div class="card">
+    <h2>Pay Rates (per plan per employee)</h2>
+    <p style="font-size:.85rem;color:#718096;margin-bottom:12px">Set each employee's dollar amount per plan/series.</p>
+    <div id="rateMatrix"></div>
+  </div>
+</div>
+
+<!-- HISTORY -->
+<div id="tab-history" class="panel">
+  <div class="card no-print">
+    <h2>Reports</h2>
+    <div class="row">
+      <div class="col"><label>Filter by Employee</label>
+        <select id="filterEmp"><option value="">All Employees</option></select></div>
+      <div class="col"><label>From</label><input type="date" id="filterFrom"></div>
+      <div class="col"><label>To</label><input type="date" id="filterTo"></div>
+      <div class="col" style="display:flex;align-items:flex-end;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="renderHistory()">Filter</button>
+        <button class="btn btn-secondary" onclick="exportCSV()">⬇ CSV</button>
+        <button class="btn btn-secondary" onclick="window.print()">🖨 Print</button>
+      </div>
+    </div>
+  </div>
+  <div id="historyContent"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let state = JSON.parse(localStorage.getItem('payroll_v1') || 'null') || {
+  employees: [], plans: [], rates: {}, weeks: []
+};
+function save() { localStorage.setItem('payroll_v1', JSON.stringify(state)); }
+
+function showTab(t) {
+  document.querySelectorAll('.tab').forEach((el,i) =>
+    el.classList.toggle('active', ['entry','setup','history'][i] === t));
+  document.querySelectorAll('.panel').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+  if(t==='entry') renderEntryTable();
+  if(t==='setup') renderSetup();
+  if(t==='history') { populateFilterEmp(); renderHistory(); }
+}
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+// ── Employees & Plans ──────────────────────────────────────────────────────
+function addEmployee() {
+  const n = document.getElementById('empName').value.trim();
+  if(!n) return;
+  if(state.employees.includes(n)) { toast('Already exists'); return; }
+  state.employees.push(n); save(); renderSetup();
+  document.getElementById('empName').value = '';
+}
+function removeEmployee(n) {
+  if(!confirm(`Remove ${n}?`)) return;
+  state.employees = state.employees.filter(e => e !== n);
+  delete state.rates[n]; save(); renderSetup();
+}
+function addPlan() {
+  const n = document.getElementById('planName').value.trim();
+  if(!n) return;
+  if(state.plans.includes(n)) { toast('Already exists'); return; }
+  state.plans.push(n); save(); renderSetup();
+  document.getElementById('planName').value = '';
+}
+function removePlan(n) {
+  if(!confirm(`Remove ${n}?`)) return;
+  state.plans = state.plans.filter(p => p !== n);
+  state.employees.forEach(e => { if(state.rates[e]) delete state.rates[e][n]; });
+  save(); renderSetup();
+}
+function setRate(emp, plan, val) {
+  if(!state.rates[emp]) state.rates[emp] = {};
+  state.rates[emp][plan] = parseFloat(val) || 0; save();
+}
+function renderSetup() {
+  document.getElementById('empTable').innerHTML = state.employees.length
+    ? state.employees.map(e => `<tr><td>${e}</td><td>
+        <button class="btn btn-danger btn-sm" onclick="removeEmployee('${escJs(e)}')">Remove</button>
+      </td></tr>`).join('')
+    : '<tr><td colspan="2" class="empty">No employees yet.</td></tr>';
+
+  document.getElementById('planTable').innerHTML = state.plans.length
+    ? state.plans.map(p => `<tr><td>${p}</td><td>
+        <button class="btn btn-danger btn-sm" onclick="removePlan('${escJs(p)}')">Remove</button>
+      </td></tr>`).join('')
+    : '<tr><td colspan="2" class="empty">No plans yet.</td></tr>';
+
+  const rm = document.getElementById('rateMatrix');
+  if(!state.employees.length || !state.plans.length) {
+    rm.innerHTML = '<p class="empty">Add employees and plans above to set rates.</p>'; return;
+  }
+  rm.innerHTML = `<table><thead><tr><th>Employee</th>
+    ${state.plans.map(p => `<th>${p}</th>`).join('')}</tr></thead>
+    <tbody>${state.employees.map(e => `<tr><td><strong>${e}</strong></td>
+      ${state.plans.map(p => `<td><input type="number" min="0" step="0.01" placeholder="$0.00"
+        value="${(state.rates[e] && state.rates[e][p]) || ''}"
+        onchange="setRate('${escJs(e)}','${escJs(p)}',this.value)"
+        style="width:90px"></td>`).join('')}</tr>`).join('')}
+    </tbody></table>`;
+}
+
+// ── Weekly Entry ───────────────────────────────────────────────────────────
+let entryRows = [];
+function renderEntryTable() {
+  const wrap = document.getElementById('entryTableWrap');
+  if(!state.employees.length || !state.plans.length) {
+    wrap.innerHTML = '<p class="empty">Go to <strong>Employees & Plans</strong> tab to get started.</p>'; return;
+  }
+  if(!entryRows.length) entryRows = [newRow()];
+  wrap.innerHTML = `<table class="entry-table">
+    <thead><tr><th>Employee</th><th>Plan / Series</th><th>Qty</th><th>Rate</th><th>Subtotal</th>
+      <th class="no-print"></th></tr></thead>
+    <tbody id="entryBody"></tbody>
+    <tfoot><tr>
+      <td colspan="4" style="text-align:right;font-weight:600;padding:10px 12px">Week Total:</td>
+      <td id="entryTotal" style="font-weight:700;color:#2d6a4f;padding:10px 12px">$0.00</td>
+      <td></td></tr></tfoot>
+  </table>`;
+  renderEntryRows();
+}
+function newRow() { return { emp:'', plan:'', qty:1 }; }
+function addEntryRow() { entryRows.push(newRow()); renderEntryRows(); }
+function removeEntryRow(i) {
+  entryRows.splice(i,1);
+  if(!entryRows.length) entryRows = [newRow()];
+  renderEntryRows();
+}
+function renderEntryRows() {
+  const body = document.getElementById('entryBody');
+  if(!body) return;
+  body.innerHTML = entryRows.map((r,i) => {
+    const rate = (state.rates[r.emp] && state.rates[r.emp][r.plan]) || 0;
+    const sub = rate * (parseFloat(r.qty) || 0);
+    return `<tr>
+      <td><select onchange="entryRows[${i}].emp=this.value;entryRows[${i}].plan='';renderEntryRows()">
+        <option value="">-- Employee --</option>
+        ${state.employees.map(e =>
+          `<option value="${escJs(e)}" ${r.emp===e?'selected':''}>${e}</option>`).join('')}
+      </select></td>
+      <td><select onchange="entryRows[${i}].plan=this.value;renderEntryRows()">
+        <option value="">-- Plan --</option>
+        ${state.plans.map(p =>
+          `<option value="${escJs(p)}" ${r.plan===p?'selected':''}>${p}</option>`).join('')}
+      </select></td>
+      <td><input type="number" min="1" value="${r.qty}" style="width:60px"
+        onchange="entryRows[${i}].qty=this.value;renderEntryRows()"></td>
+      <td>${rate ? '$'+rate.toFixed(2) : '—'}</td>
+      <td>${sub ? '$'+sub.toFixed(2) : '—'}</td>
+      <td class="no-print">
+        <button class="btn btn-danger btn-sm" onclick="removeEntryRow(${i})">✕</button>
+      </td></tr>`;
+  }).join('');
+  const total = entryRows.reduce((s,r) => {
+    const rate = (state.rates[r.emp] && state.rates[r.emp][r.plan]) || 0;
+    return s + rate * (parseFloat(r.qty) || 0);
+  }, 0);
+  const te = document.getElementById('entryTotal');
+  if(te) te.textContent = '$' + total.toFixed(2);
+}
+function saveWeek() {
+  const dateEl = document.getElementById('weekDate');
+  if(!dateEl.value) { toast('Please select a week-ending date'); return; }
+  const valid = entryRows.filter(r => r.emp && r.plan);
+  if(!valid.length) { toast('No complete entries to save'); return; }
+  const entries = valid.map(r => ({
+    emp: r.emp, plan: r.plan, qty: parseFloat(r.qty) || 1,
+    rate: (state.rates[r.emp] && state.rates[r.emp][r.plan]) || 0
+  }));
+  state.weeks = state.weeks.filter(w => w.date !== dateEl.value);
+  state.weeks.push({ date: dateEl.value, entries });
+  state.weeks.sort((a,b) => b.date.localeCompare(a.date));
+  save(); showWeekSummary(dateEl.value, entries);
+  entryRows = [newRow()]; renderEntryTable(); toast('Week saved!');
+}
+function showWeekSummary(date, entries) {
+  const byEmp = {};
+  entries.forEach(e => { if(!byEmp[e.emp]) byEmp[e.emp]=0; byEmp[e.emp] += e.rate*e.qty; });
+  const total = Object.values(byEmp).reduce((a,b) => a+b, 0);
+  document.getElementById('weekSummary').innerHTML =
+    `<p style="color:#718096;font-size:.85rem;margin-bottom:12px">Week ending ${fmt(date)}</p>
+    <table><thead><tr><th>Employee</th><th>Total Pay</th></tr></thead>
+    <tbody>${Object.entries(byEmp).map(([e,t]) =>
+      `<tr><td>${e}</td><td><strong>$${t.toFixed(2)}</strong></td></tr>`).join('')}
+    <tr style="background:#f0fdf4"><td><strong>TOTAL</strong></td>
+      <td><strong style="color:#2d6a4f">$${total.toFixed(2)}</strong></td></tr>
+    </tbody></table>`;
+  document.getElementById('weekSummaryCard').style.display = 'block';
+}
+
+// ── History ────────────────────────────────────────────────────────────────
+function populateFilterEmp() {
+  const sel = document.getElementById('filterEmp');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">All Employees</option>' +
+    state.employees.map(e =>
+      `<option value="${escJs(e)}" ${cur===e?'selected':''}>${e}</option>`).join('');
+}
+function renderHistory() {
+  const empF = document.getElementById('filterEmp').value;
+  const from = document.getElementById('filterFrom').value;
+  const to   = document.getElementById('filterTo').value;
+  let weeks = state.weeks;
+  if(from) weeks = weeks.filter(w => w.date >= from);
+  if(to)   weeks = weeks.filter(w => w.date <= to);
+  const div = document.getElementById('historyContent');
+  if(!weeks.length) {
+    div.innerHTML = '<div class="card"><p class="empty">No payroll history yet.</p></div>'; return;
+  }
+  let grandTotal = 0;
+  div.innerHTML = weeks.map(w => {
+    let entries = w.entries;
+    if(empF) entries = entries.filter(e => e.emp === empF);
+    if(!entries.length) return '';
+    const weekTotal = entries.reduce((s,e) => s + e.rate*e.qty, 0);
+    grandTotal += weekTotal;
+    return `<div class="card"><div class="history-week">
+      <h3>Week ending ${fmt(w.date)} &nbsp;
+        <span class="badge badge-green">$${weekTotal.toFixed(2)}</span></h3>
+      <table><thead><tr>
+        <th>Employee</th><th>Plan / Series</th><th>Qty</th><th>Rate</th><th>Subtotal</th>
+      </tr></thead>
+      <tbody>${entries.map(e => `<tr>
+        <td>${e.emp}</td><td>${e.plan}</td><td>${e.qty}</td>
+        <td>$${e.rate.toFixed(2)}</td><td>$${(e.rate*e.qty).toFixed(2)}</td>
+      </tr>`).join('')}</tbody></table>
+    </div></div>`;
+  }).join('');
+  div.innerHTML += `<div class="card" style="background:#f0fdf4">
+    <strong>Grand Total (filtered):</strong>
+    <span class="summary-total">$${grandTotal.toFixed(2)}</span>
+  </div>`;
+}
+
+// ── Export ─────────────────────────────────────────────────────────────────
+function exportCSV() {
+  const empF = document.getElementById('filterEmp').value;
+  const from = document.getElementById('filterFrom').value;
+  const to   = document.getElementById('filterTo').value;
+  let weeks = state.weeks;
+  if(from) weeks = weeks.filter(w => w.date >= from);
+  if(to)   weeks = weeks.filter(w => w.date <= to);
+  let rows = [['Week Ending','Employee','Plan/Series','Qty','Rate','Subtotal']];
+  weeks.forEach(w => {
+    let entries = w.entries;
+    if(empF) entries = entries.filter(e => e.emp === empF);
+    entries.forEach(e => rows.push([
+      w.date, e.emp, e.plan, e.qty, e.rate.toFixed(2), (e.rate*e.qty).toFixed(2)
+    ]));
+  });
+  const csv = rows.map(r => r.map(v => `"${v}"`).join(',')).join('\n');
+  dl('data:text/csv;charset=utf-8,'+encodeURIComponent(csv), 'payroll_export.csv');
+  toast('CSV exported!');
+}
+function exportHTML() {
+  dl('data:text/html;charset=utf-8,'+encodeURIComponent(document.documentElement.outerHTML),
+    'payroll-tracker.html');
+  toast('HTML file downloaded!');
+}
+function dl(href, name) {
+  const a = document.createElement('a'); a.href = href; a.download = name; a.click();
+}
+
+// ── Utils ──────────────────────────────────────────────────────────────────
+function fmt(d) {
+  if(!d) return '';
+  const [y,m,day] = d.split('-'); return `${m}/${day}/${y}`;
+}
+function escJs(s) { return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+
+// ── Init ───────────────────────────────────────────────────────────────────
+document.getElementById('weekDate').value = new Date().toISOString().split('T')[0];
+renderEntryTable();
+</script>
+</body>
+</html>
