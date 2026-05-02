@@ -3,27 +3,28 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KWells Payroll & Job Costing</title>
+<title>KWells Trade Partner System</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; color: #1a202c; }
-  header { background: #2d6a4f; color: white; padding: 16px 24px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-  header h1 { font-size: 1.2rem; font-weight: 700; }
-  header .subtitle { font-size: .8rem; opacity: .8; }
-  .header-right { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; }
-  .tabs { display: flex; background: #fff; border-bottom: 2px solid #e2e8f0; overflow-x: auto; }
-  .tab { padding: 12px 20px; cursor: pointer; font-weight: 500; color: #718096; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all .2s; white-space: nowrap; font-size: .9rem; }
+  body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; color: #1a202c; font-size: 14px; }
+  header { background: linear-gradient(135deg, #1b4332, #2d6a4f); color: white; padding: 14px 20px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; box-shadow: 0 2px 8px rgba(0,0,0,.2); }
+  header h1 { font-size: 1.1rem; font-weight: 700; }
+  header .sub { font-size: .75rem; opacity: .75; margin-top: 2px; }
+  .header-right { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .tabs { display: flex; background: #fff; border-bottom: 2px solid #e2e8f0; overflow-x: auto; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 4px rgba(0,0,0,.06); }
+  .tab { padding: 11px 18px; cursor: pointer; font-weight: 600; color: #718096; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all .2s; white-space: nowrap; font-size: .82rem; }
   .tab.active { color: #2d6a4f; border-bottom-color: #2d6a4f; }
   .tab:hover:not(.active) { color: #2d6a4f; background: #f0f4f8; }
-  .panel { display: none; padding: 20px; max-width: 1000px; margin: 0 auto; }
+  .panel { display: none; padding: 16px; max-width: 1100px; margin: 0 auto; }
   .panel.active { display: block; }
-  .card { background: white; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
-  .card h2 { font-size: 1rem; font-weight: 700; margin-bottom: 16px; color: #2d6a4f; display: flex; align-items: center; gap: 8px; }
-  .card h3 { font-size: .9rem; font-weight: 600; margin: 16px 0 10px; color: #4a5568; }
-  label { display: block; font-size: .82rem; font-weight: 500; color: #4a5568; margin-bottom: 4px; margin-top: 12px; }
-  input, select { width: 100%; padding: 8px 12px; border: 1px solid #cbd5e0; border-radius: 6px; font-size: .9rem; background: white; }
-  input:focus, select:focus { outline: none; border-color: #2d6a4f; box-shadow: 0 0 0 3px rgba(45,106,79,.15); }
-  .btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: .85rem; transition: all .2s; }
+  .card { background: white; border-radius: 10px; padding: 18px; margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,.07); }
+  .card h2 { font-size: .95rem; font-weight: 700; margin-bottom: 14px; color: #2d6a4f; display: flex; align-items: center; gap: 8px; }
+  .card h3 { font-size: .85rem; font-weight: 600; margin: 14px 0 8px; color: #4a5568; }
+  label { display: block; font-size: .78rem; font-weight: 600; color: #4a5568; margin-bottom: 3px; margin-top: 10px; }
+  input, select, textarea { width: 100%; padding: 7px 10px; border: 1px solid #cbd5e0; border-radius: 6px; font-size: .85rem; background: white; font-family: inherit; }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: #2d6a4f; box-shadow: 0 0 0 3px rgba(45,106,79,.12); }
+  textarea { resize: vertical; min-height: 60px; }
+  .btn { padding: 7px 14px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: .8rem; transition: all .2s; display: inline-flex; align-items: center; gap: 5px; }
   .btn-primary { background: #2d6a4f; color: white; }
   .btn-primary:hover { background: #1b4332; }
   .btn-danger { background: #fff0f0; color: #c53030; border: 1px solid #fed7d7; }
@@ -32,208 +33,266 @@
   .btn-secondary:hover { background: #e2e8f0; }
   .btn-warning { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
   .btn-warning:hover { background: #fef3c7; }
-  .btn-sm { padding: 4px 10px; font-size: .78rem; }
-  .row { display: flex; gap: 12px; flex-wrap: wrap; }
-  .col { flex: 1; min-width: 140px; }
-  table { width: 100%; border-collapse: collapse; font-size: .88rem; }
-  th { background: #f7fafc; text-align: left; padding: 9px 12px; font-weight: 600; color: #4a5568; border-bottom: 2px solid #e2e8f0; white-space: nowrap; }
-  td { padding: 9px 12px; border-bottom: 1px solid #f0f4f8; vertical-align: middle; }
+  .btn-success { background: #f0fff4; color: #276749; border: 1px solid #9ae6b4; }
+  .btn-success:hover { background: #c6f6d5; }
+  .btn-blue { background: #ebf8ff; color: #2b6cb0; border: 1px solid #bee3f8; }
+  .btn-blue:hover { background: #bee3f8; }
+  .btn-sm { padding: 4px 9px; font-size: .75rem; }
+  .btn-xs { padding: 2px 7px; font-size: .72rem; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .col { flex: 1; min-width: 130px; }
+  .col-2 { flex: 2; min-width: 200px; }
+  table { width: 100%; border-collapse: collapse; font-size: .83rem; }
+  th { background: #f7fafc; text-align: left; padding: 8px 10px; font-weight: 700; color: #4a5568; border-bottom: 2px solid #e2e8f0; white-space: nowrap; }
+  td { padding: 8px 10px; border-bottom: 1px solid #f0f4f8; vertical-align: middle; }
   tr:last-child td { border-bottom: none; }
-  tr:hover td { background: #f7fafc; }
-  .badge { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: .75rem; font-weight: 700; }
-  .badge-green { background: #c6f6d5; color: #276749; }
-  .badge-blue { background: #bee3f8; color: #2b6cb0; }
-  .badge-orange { background: #feebc8; color: #c05621; }
-  .badge-red { background: #fed7d7; color: #c53030; }
-  .empty { text-align: center; padding: 28px; color: #a0aec0; font-size: .9rem; }
-  .action-row { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; flex-wrap: wrap; }
-  .entry-table input, .entry-table select { padding: 5px 8px; font-size: .82rem; }
-  .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 16px; }
-  .stat { background: #f7fafc; border-radius: 8px; padding: 14px; text-align: center; }
-  .stat .val { font-size: 1.3rem; font-weight: 700; color: #2d6a4f; }
-  .stat .lbl { font-size: .75rem; color: #718096; margin-top: 4px; }
+  tr:hover td { background: #fafafa; }
+  .badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 99px; font-size: .72rem; font-weight: 700; white-space: nowrap; }
+  .bg-green { background: #c6f6d5; color: #276749; }
+  .bg-blue { background: #bee3f8; color: #2b6cb0; }
+  .bg-orange { background: #feebc8; color: #c05621; }
+  .bg-red { background: #fed7d7; color: #c53030; }
+  .bg-gray { background: #e2e8f0; color: #4a5568; }
+  .bg-purple { background: #e9d8fd; color: #6b46c1; }
+  .bg-yellow { background: #fefcbf; color: #744210; }
+  .empty { text-align: center; padding: 28px; color: #a0aec0; font-size: .88rem; }
+  .action-row { display: flex; gap: 8px; justify-content: flex-end; margin-top: 14px; flex-wrap: wrap; }
+  .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 14px; }
+  .stat { background: #f7fafc; border-radius: 8px; padding: 12px; text-align: center; border: 1px solid #e2e8f0; }
+  .stat .val { font-size: 1.2rem; font-weight: 700; color: #2d6a4f; }
+  .stat .lbl { font-size: .72rem; color: #718096; margin-top: 3px; }
   .stat.red .val { color: #c53030; }
   .stat.blue .val { color: #2b6cb0; }
   .stat.orange .val { color: #c05621; }
-  .week-block { border-left: 4px solid #2d6a4f; padding-left: 14px; margin-bottom: 24px; }
-  .week-block h3 { font-size: .95rem; font-weight: 700; margin-bottom: 10px; color: #2d3748; }
-  .pl-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f0f4f8; font-size: .88rem; }
+  .stat.purple .val { color: #6b46c1; }
+  .info-box { background: #ebf8ff; border: 1px solid #bee3f8; border-radius: 8px; padding: 10px 12px; font-size: .78rem; color: #2b6cb0; margin-bottom: 12px; }
+  .warn-box { background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 10px 12px; font-size: .78rem; color: #92400e; margin-bottom: 12px; }
+  .success-box { background: #f0fff4; border: 1px solid #9ae6b4; border-radius: 8px; padding: 10px 12px; font-size: .78rem; color: #276749; margin-bottom: 12px; }
+  .address-card { border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 14px; overflow: hidden; }
+  .address-header { background: #f7fafc; padding: 12px 16px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; cursor: pointer; border-bottom: 1px solid #e2e8f0; }
+  .address-header:hover { background: #edf2f7; }
+  .address-body { padding: 14px 16px; }
+  .po-card { border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 10px; }
+  .po-header { background: #fafafa; padding: 10px 14px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; border-bottom: 1px solid #f0f4f8; }
+  .po-body { padding: 12px 14px; }
+  .epo-row { background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: 10px 12px; margin-bottom: 8px; }
+  .epo-subline { background: #fef3c7; border-radius: 4px; padding: 8px 10px; margin-top: 8px; font-size: .78rem; }
+  .pl-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #f0f4f8; font-size: .85rem; }
   .pl-row:last-child { border-bottom: none; }
-  .pl-row.total { font-weight: 700; font-size: .95rem; border-top: 2px solid #e2e8f0; padding-top: 10px; margin-top: 4px; }
-  .pl-row.profit { color: #276749; }
+  .pl-row.subtotal { font-weight: 600; border-top: 1px solid #e2e8f0; padding-top: 8px; margin-top: 4px; }
+  .pl-row.total { font-weight: 700; font-size: .95rem; border-top: 2px solid #2d6a4f; padding-top: 10px; margin-top: 6px; color: #2d6a4f; }
   .pl-row.loss { color: #c53030; }
-  .toggle { display: flex; gap: 4px; }
-  .toggle button { flex: 1; padding: 6px; border: 1px solid #cbd5e0; background: white; border-radius: 6px; font-size: .8rem; cursor: pointer; font-weight: 500; color: #718096; }
-  .toggle button.active { background: #2d6a4f; color: white; border-color: #2d6a4f; }
-  .divider { border: none; border-top: 1px solid #e2e8f0; margin: 16px 0; }
-  .info-box { background: #ebf8ff; border: 1px solid #bee3f8; border-radius: 8px; padding: 12px; font-size: .82rem; color: #2b6cb0; margin-bottom: 16px; }
-  .warn-box { background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px; font-size: .82rem; color: #92400e; margin-bottom: 16px; }
-  .toast { position: fixed; bottom: 24px; right: 24px; background: #276749; color: white; padding: 12px 20px; border-radius: 8px; font-weight: 600; font-size: .88rem; opacity: 0; transition: opacity .3s; pointer-events: none; z-index: 9999; }
-  .toast.show { opacity: 1; }
-  .export-btn { background: rgba(255,255,255,.15); color: white; border: 1px solid rgba(255,255,255,.3); padding: 6px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: .82rem; }
-  .export-btn:hover { background: rgba(255,255,255,.25); }
-  @media print {
-    .tabs, .action-row, .no-print, header .header-right { display: none !important; }
-    .panel { display: block !important; padding: 0; }
-    .card { box-shadow: none; border: 1px solid #e2e8f0; page-break-inside: avoid; margin-bottom: 12px; }
-    body { background: white; }
-  }
+  .phase-indicator { display: flex; gap: 0; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; margin-bottom: 14px; }
+  .phase-step { flex: 1; padding: 10px; text-align: center; font-size: .75rem; font-weight: 600; background: #f7fafc; color: #a0aec0; border-right: 1px solid #e2e8f0; }
+  .phase-step:last-child { border-right: none; }
+  .phase-step.done { background: #c6f6d5; color: #276749; }
+  .phase-step.active { background: #2d6a4f; color: white; }
+  .divider { border: none; border-top: 1px solid #e2e8f0; margin: 12px 0; }
   .overflow-x { overflow-x: auto; }
+  .toggle { display: flex; gap: 3px; }
+  .toggle button { flex: 1; padding: 5px; border: 1px solid #cbd5e0; background: white; border-radius: 5px; font-size: .75rem; cursor: pointer; font-weight: 600; color: #718096; }
+  .toggle button.active { background: #2d6a4f; color: white; border-color: #2d6a4f; }
+  .toast { position: fixed; bottom: 20px; right: 20px; background: #276749; color: white; padding: 10px 18px; border-radius: 8px; font-weight: 600; font-size: .85rem; opacity: 0; transition: opacity .3s; pointer-events: none; z-index: 9999; max-width: 280px; }
+  .toast.show { opacity: 1; }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 16px; }
+  .modal { background: white; border-radius: 12px; padding: 20px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,.3); }
+  .modal h2 { font-size: 1rem; font-weight: 700; margin-bottom: 14px; color: #2d6a4f; }
+  .export-btn { background: rgba(255,255,255,.15); color: white; border: 1px solid rgba(255,255,255,.3); padding: 6px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: .78rem; }
+  .export-btn:hover { background: rgba(255,255,255,.25); }
+  .chevron { transition: transform .2s; display: inline-block; }
+  .chevron.open { transform: rotate(90deg); }
+  @media print {
+    .tabs, .action-row, .no-print, .header-right { display: none !important; }
+    .panel { display: block !important; padding: 0; }
+    .card { box-shadow: none; border: 1px solid #e2e8f0; page-break-inside: avoid; }
+    body { background: white; font-size: 11px; }
+  }
 </style>
 </head>
 <body>
 
 <header>
   <div>
-    <div class="header-right" style="margin-left:0;margin-bottom:4px">
-      <svg width="22" height="22" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M8 10h8M8 14h5"/></svg>
-    </div>
-    <div style="font-size:1.1rem;font-weight:700">KWells Payroll & Job Costing</div>
-    <div class="subtitle">Powered by Home Creations contract data</div>
+    <div h1 style="font-size:1.1rem;font-weight:700">🏗️ KWells Trade Partner System</div>
+    <div class="sub">Job Costing · Payroll · EPO Reconciliation · P&L</div>
   </div>
-  <div class="header-right">
-    <button class="export-btn no-print" onclick="exportHTML()">⬇ Export HTML</button>
+  <div class="header-right no-print">
+    <button class="export-btn" onclick="exportHTML()">⬇ Export HTML</button>
   </div>
 </header>
 
 <div class="tabs">
-  <div class="tab active" onclick="showTab('entry')">📋 Weekly Entry</div>
+  <div class="tab active" onclick="showTab('dashboard')">📊 Dashboard</div>
+  <div class="tab" onclick="showTab('jobs')">🏠 Jobs</div>
+  <div class="tab" onclick="showTab('payroll')">💵 Payroll</div>
   <div class="tab" onclick="showTab('setup')">⚙️ Setup</div>
-  <div class="tab" onclick="showTab('costing')">🏗️ Job Costing</div>
-  <div class="tab" onclick="showTab('reports')">📊 Reports</div>
+  <div class="tab" onclick="showTab('reports')">📋 Reports</div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════ WEEKLY ENTRY -->
-<div id="tab-entry" class="panel active">
+<!-- DASHBOARD -->
+<div id="tab-dashboard" class="panel active">
+  <div id="dashContent"></div>
+</div>
+
+<!-- JOBS -->
+<div id="tab-jobs" class="panel">
+  <div class="card no-print">
+    <h2>🏠 Job Management</h2>
+    <div class="row">
+      <div class="col-2">
+        <label>Filter by Status</label>
+        <select id="jobStatusFilter" onchange="renderJobs()">
+          <option value="">All Jobs</option>
+          <option value="open">Open</option>
+          <option value="soft">Soft Closed</option>
+          <option value="closed">Hard Closed</option>
+        </select>
+      </div>
+      <div class="col" style="display:flex;align-items:flex-end">
+        <button class="btn btn-primary" onclick="openAddJobModal()">+ New Job / Address</button>
+      </div>
+    </div>
+  </div>
+  <div id="jobsList"></div>
+</div>
+
+<!-- PAYROLL -->
+<div id="tab-payroll" class="panel">
   <div class="card">
-    <h2>📋 Weekly Payroll Entry</h2>
-    <div class="row" style="margin-bottom:16px;align-items:center">
+    <h2>💵 Weekly Payroll Entry</h2>
+    <div class="row" style="margin-bottom:14px">
       <div class="col">
         <label>Week Ending</label>
         <input type="date" id="weekDate">
       </div>
       <div class="col">
-        <label>WC / Liability Insurance Premium This Week ($)</label>
-        <input type="number" id="weeklyInsurance" min="0" step="0.01" placeholder="e.g. 420.00">
+        <label>WC / Insurance Premium This Week ($)</label>
+        <input type="number" id="weeklyInsurance" min="0" step="0.01" placeholder="0.00">
       </div>
     </div>
-    <div id="entryTableWrap"></div>
+    <div id="payrollTableWrap"></div>
     <div class="action-row no-print">
-      <button class="btn btn-secondary" onclick="addEntryRow()">+ Add Row</button>
-      <button class="btn btn-primary" onclick="saveWeek()">💾 Save Week</button>
-      <button class="btn btn-secondary" onclick="printSummary()">🖨 Print</button>
+      <button class="btn btn-secondary" onclick="addPayrollRow()">+ Add Row</button>
+      <button class="btn btn-primary" onclick="savePayrollWeek()">💾 Save Week</button>
+      <button class="btn btn-secondary" onclick="window.print()">🖨 Print</button>
     </div>
   </div>
-  <div class="card" id="weekSummaryCard" style="display:none">
-    <h2>✅ Week Saved — Summary</h2>
-    <div id="weekSummary"></div>
+  <div class="card" id="payrollSummaryCard" style="display:none">
+    <h2>✅ Week Saved</h2>
+    <div id="payrollSummary"></div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════ SETUP -->
+<!-- SETUP -->
 <div id="tab-setup" class="panel">
   <div class="card">
     <h2>👷 Employees</h2>
-    <div class="info-box">Add each worker. Set their tax classification and withholding info. This affects the tax estimates in reports.</div>
-    <div class="row" style="margin-bottom:12px">
+    <div class="row" style="margin-bottom:10px">
       <div class="col"><label>Full Name</label><input id="empName" placeholder="e.g. John Smith"></div>
       <div class="col" style="display:flex;align-items:flex-end">
-        <button class="btn btn-primary" onclick="addEmployee()">Add Employee</button>
+        <button class="btn btn-primary" onclick="addEmployee()">Add</button>
       </div>
     </div>
     <div id="empList"></div>
   </div>
-
   <div class="card">
     <h2>🏠 Plans / Series</h2>
-    <div class="row" style="margin-bottom:12px">
-      <div class="col"><label>Plan / Series Name</label><input id="planName" placeholder="e.g. Series 1800"></div>
+    <div class="row" style="margin-bottom:10px">
+      <div class="col"><label>Plan / Series Name</label><input id="planName" placeholder="e.g. Wellington Elite"></div>
       <div class="col" style="display:flex;align-items:flex-end">
-        <button class="btn btn-primary" onclick="addPlan()">Add Plan</button>
+        <button class="btn btn-primary" onclick="addPlan()">Add</button>
       </div>
     </div>
-    <table><thead><tr><th>Plan / Series</th><th>Actions</th></tr></thead>
-    <tbody id="planTable"><tr><td colspan="2" class="empty">No plans yet.</td></tr></tbody></table>
+    <table><thead><tr><th>Plan / Series</th><th>HC Contract Value</th><th></th></tr></thead>
+    <tbody id="planTable"><tr><td colspan="3" class="empty">No plans yet.</td></tr></tbody></table>
   </div>
-
   <div class="card">
-    <h2>💵 Labor Rates (per employee per plan)</h2>
-    <p style="font-size:.82rem;color:#718096;margin-bottom:12px">What each employee earns per completed plan/series.</p>
+    <h2>💵 Labor Rates Matrix</h2>
+    <p style="font-size:.78rem;color:#718096;margin-bottom:10px">Dollar amount per employee per plan/series completed.</p>
     <div class="overflow-x" id="rateMatrix"></div>
   </div>
-
   <div class="card">
-    <h2>🏗️ HC Contract Values (per plan)</h2>
-    <p style="font-size:.82rem;color:#718096;margin-bottom:12px">What Home Creations pays KWells Construction per plan/series. Used for job costing and P&L.</p>
-    <div class="overflow-x" id="contractMatrix"></div>
+    <h2>🔧 PO Cost Codes</h2>
+    <div class="info-box">These are the trade scopes HC assigns POs to. e.g. Frame 1, Frame 2, Cornice/Siding, Frame 3 Punch</div>
+    <div class="row" style="margin-bottom:10px">
+      <div class="col"><label>Cost Code Name</label><input id="costCodeName" placeholder="e.g. Frame 1"></div>
+      <div class="col" style="display:flex;align-items:flex-end">
+        <button class="btn btn-primary" onclick="addCostCode()">Add</button>
+      </div>
+    </div>
+    <table><thead><tr><th>Cost Code</th><th></th></tr></thead>
+    <tbody id="costCodeTable"><tr><td colspan="2" class="empty">No cost codes yet.</td></tr></tbody></table>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════ JOB COSTING -->
-<div id="tab-costing" class="panel">
-  <div class="card">
-    <h2>🏗️ Job Costing — Plan / Series Breakdown</h2>
-    <p style="font-size:.82rem;color:#718096;margin-bottom:16px">Select a saved week to see the full cost breakdown per plan.</p>
-    <div class="row no-print">
-      <div class="col">
-        <label>Select Week</label>
-        <select id="costingWeekSelect" onchange="renderCosting()">
-          <option value="">-- Select a week --</option>
+<!-- REPORTS -->
+<div id="tab-reports" class="panel">
+  <div class="card no-print">
+    <h2>📋 Reports</h2>
+    <div class="row">
+      <div class="col"><label>From</label><input type="date" id="rptFrom"></div>
+      <div class="col"><label>To</label><input type="date" id="rptTo"></div>
+      <div class="col"><label>Status</label>
+        <select id="rptStatus">
+          <option value="">All</option>
+          <option value="open">Open</option>
+          <option value="soft">Soft Closed</option>
+          <option value="closed">Hard Closed</option>
         </select>
       </div>
     </div>
-    <div id="costingContent" style="margin-top:20px"></div>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════ REPORTS -->
-<div id="tab-reports" class="panel">
-  <div class="card no-print">
-    <h2>📊 Reports & History</h2>
-    <div class="row">
-      <div class="col">
-        <label>Filter by Employee</label>
-        <select id="filterEmp"><option value="">All Employees</option></select>
-      </div>
-      <div class="col"><label>From</label><input type="date" id="filterFrom"></div>
-      <div class="col"><label>To</label><input type="date" id="filterTo"></div>
-    </div>
-    <div class="action-row" style="margin-top:12px">
-      <button class="btn btn-primary" onclick="renderReports()">Filter</button>
+    <div class="action-row">
+      <button class="btn btn-primary" onclick="renderReports()">Run Report</button>
       <button class="btn btn-secondary" onclick="exportCSV()">⬇ CSV</button>
       <button class="btn btn-secondary" onclick="window.print()">🖨 Print</button>
-      <button class="btn btn-warning" onclick="clearHistory()">🗑 Clear History</button>
+      <button class="btn btn-warning" onclick="clearAllHistory()">🗑 Clear All Data</button>
     </div>
   </div>
   <div id="reportsContent"></div>
 </div>
 
+<!-- MODALS -->
+<div id="modalOverlay" class="modal-overlay" style="display:none" onclick="closeModalOnOverlay(event)">
+  <div class="modal" id="modalContent"></div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
-// ══════════════════════════════════════════════════════════════ STATE
-let S = JSON.parse(localStorage.getItem('kwells_v2') || 'null') || {
-  employees: {}, // { name: { type:'w2'|'1099', filing:'single'|'married', allowances:0 } }
+// ══════════════════════════════ STATE
+let S = JSON.parse(localStorage.getItem('kwells_v3') || 'null') || {
+  employees: {},   // { name: { type, filing, allowances } }
   plans: [],
-  rates: {},     // rates[emp][plan] = labor $
-  contracts: {}, // contracts[plan] = HC pays KWells $
-  weeks: []      // { date, insurance, entries:[{emp,plan,qty,rate}] }
+  contracts: {},   // contracts[plan] = HC base value
+  rates: {},       // rates[emp][plan] = labor $
+  costCodes: [],   // ['Frame 1', 'Frame 2', ...]
+  jobs: [],        // see job schema below
+  weeks: []        // payroll weeks
 };
-function save() { localStorage.setItem('kwells_v2', JSON.stringify(S)); }
+// Job schema:
+// { id, address, plan, status:'open'|'soft'|'closed', createdAt,
+//   pos: [ { id, poNum, costCode, contractValue, notes, laborEntries:[], epos:[] } ],
+//   softClosedAt, hardClosedAt, notes }
+// EPO schema:
+// { id, epoNum, description, incomeAmt, laborLines:[{desc,type:'flat'|'hourly',rate,hours,amt}], createdAt }
 
-// ══════════════════════════════════════════════════════════════ TABS
+function save() { localStorage.setItem('kwells_v3', JSON.stringify(S)); }
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+
+// ══════════════════════════════ TABS
 function showTab(t) {
   document.querySelectorAll('.tab').forEach((el,i) =>
-    el.classList.toggle('active', ['entry','setup','costing','reports'][i] === t));
+    el.classList.toggle('active', ['dashboard','jobs','payroll','setup','reports'][i] === t));
   document.querySelectorAll('.panel').forEach(el => el.classList.remove('active'));
   document.getElementById('tab-'+t).classList.add('active');
-  if(t==='entry') renderEntryTable();
+  if(t==='dashboard') renderDashboard();
+  if(t==='jobs') renderJobs();
+  if(t==='payroll') renderPayroll();
   if(t==='setup') renderSetup();
-  if(t==='costing') { populateCostingWeeks(); renderCosting(); }
-  if(t==='reports') { populateFilterEmp(); renderReports(); }
+  if(t==='reports') renderReports();
 }
 
-// ══════════════════════════════════════════════════════════════ TOAST
+// ══════════════════════════════ TOAST
 function toast(msg, err=false) {
   const el = document.getElementById('toast');
   el.textContent = msg;
@@ -242,7 +301,19 @@ function toast(msg, err=false) {
   setTimeout(() => el.classList.remove('show'), 2800);
 }
 
-// ══════════════════════════════════════════════════════════════ SETUP
+// ══════════════════════════════ MODAL
+function openModal(html) {
+  document.getElementById('modalContent').innerHTML = html;
+  document.getElementById('modalOverlay').style.display = 'flex';
+}
+function closeModal() {
+  document.getElementById('modalOverlay').style.display = 'none';
+}
+function closeModalOnOverlay(e) {
+  if(e.target === document.getElementById('modalOverlay')) closeModal();
+}
+
+// ══════════════════════════════ SETUP
 function addEmployee() {
   const n = document.getElementById('empName').value.trim();
   if(!n) return;
@@ -250,17 +321,17 @@ function addEmployee() {
   S.employees[n] = { type:'1099', filing:'single', allowances:0 };
   save(); renderSetup();
   document.getElementById('empName').value = '';
+  toast('Employee added');
 }
 function removeEmployee(n) {
-  if(!confirm(`Remove ${n}? This cannot be undone.`)) return;
-  delete S.employees[n];
-  delete S.rates[n];
+  if(!confirm(`Remove ${n}?`)) return;
+  delete S.employees[n]; delete S.rates[n];
   save(); renderSetup();
 }
 function updateEmpField(n, field, val) {
   if(!S.employees[n]) return;
   S.employees[n][field] = field==='allowances' ? parseInt(val)||0 : val;
-  save();
+  save(); renderSetup();
 }
 function addPlan() {
   const n = document.getElementById('planName').value.trim();
@@ -271,423 +342,731 @@ function addPlan() {
 }
 function removePlan(n) {
   if(!confirm(`Remove ${n}?`)) return;
-  S.plans = S.plans.filter(p => p !== n);
+  S.plans = S.plans.filter(p => p!==n);
   Object.keys(S.employees).forEach(e => { if(S.rates[e]) delete S.rates[e][n]; });
   delete S.contracts[n];
   save(); renderSetup();
 }
+function setContract(plan, val) { S.contracts[plan] = parseFloat(val)||0; save(); }
 function setRate(emp, plan, val) {
   if(!S.rates[emp]) S.rates[emp] = {};
   S.rates[emp][plan] = parseFloat(val)||0; save();
 }
-function setContract(plan, val) {
-  S.contracts[plan] = parseFloat(val)||0; save();
+function addCostCode() {
+  const n = document.getElementById('costCodeName').value.trim();
+  if(!n) return;
+  if(S.costCodes.includes(n)) { toast('Already exists', true); return; }
+  S.costCodes.push(n); save(); renderSetup();
+  document.getElementById('costCodeName').value = '';
+}
+function removeCostCode(n) {
+  if(!confirm(`Remove ${n}?`)) return;
+  S.costCodes = S.costCodes.filter(c => c!==n);
+  save(); renderSetup();
 }
 function renderSetup() {
   const empNames = Object.keys(S.employees);
-  // employee list
+  // employees
   const empList = document.getElementById('empList');
-  if(!empNames.length) {
-    empList.innerHTML = '<p class="empty">No employees yet.</p>';
-  } else {
-    empList.innerHTML = empNames.map(n => {
-      const e = S.employees[n];
-      return `<div style="border:1px solid #e2e8f0;border-radius:8px;padding:14px;margin-bottom:10px">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-          <strong>${n}</strong>
-          <button class="btn btn-danger btn-sm" onclick="removeEmployee('${escJ(n)}')">Remove</button>
-        </div>
-        <div class="row">
-          <div class="col">
-            <label>Classification</label>
-            <div class="toggle">
-              <button class="${e.type==='w2'?'active':''}" onclick="updateEmpField('${escJ(n)}','type','w2');renderSetup()">W-2</button>
-              <button class="${e.type==='1099'?'active':''}" onclick="updateEmpField('${escJ(n)}','type','1099');renderSetup()">1099</button>
-            </div>
-          </div>
-          <div class="col">
-            <label>Filing Status</label>
-            <select onchange="updateEmpField('${escJ(n)}','filing',this.value)">
-              <option value="single" ${e.filing==='single'?'selected':''}>Single</option>
-              <option value="married" ${e.filing==='married'?'selected':''}>Married</option>
-            </select>
-          </div>
-          <div class="col">
-            <label>Allowances</label>
-            <input type="number" min="0" value="${e.allowances}" style="width:80px"
-              onchange="updateEmpField('${escJ(n)}','allowances',this.value)">
+  empList.innerHTML = empNames.length ? empNames.map(n => {
+    const e = S.employees[n];
+    return `<div style="border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <strong>${n}</strong>
+        <button class="btn btn-danger btn-sm" onclick="removeEmployee('${ej(n)}')">Remove</button>
+      </div>
+      <div class="row">
+        <div class="col"><label>Classification</label>
+          <div class="toggle">
+            <button class="${e.type==='w2'?'active':''}" onclick="updateEmpField('${ej(n)}','type','w2')">W-2</button>
+            <button class="${e.type==='1099'?'active':''}" onclick="updateEmpField('${ej(n)}','type','1099')">1099</button>
           </div>
         </div>
-        ${e.type==='1099'?'<div class="warn-box" style="margin-top:10px;margin-bottom:0">1099: No withholding deducted. Gross pay shown only. Worker responsible for self-employment tax.</div>':''}
-      </div>`;
-    }).join('');
-  }
-  // plans table
+        <div class="col"><label>Filing</label>
+          <select onchange="updateEmpField('${ej(n)}','filing',this.value)">
+            <option value="single" ${e.filing==='single'?'selected':''}>Single</option>
+            <option value="married" ${e.filing==='married'?'selected':''}>Married</option>
+          </select>
+        </div>
+        <div class="col"><label>Allowances</label>
+          <input type="number" min="0" value="${e.allowances}" style="width:70px"
+            onchange="updateEmpField('${ej(n)}','allowances',this.value)">
+        </div>
+      </div>
+      ${e.type==='1099'?'<div class="warn-box" style="margin-top:8px;margin-bottom:0;font-size:.75rem">1099: No withholding. Worker responsible for self-employment tax.</div>':''}
+    </div>`;
+  }).join('') : '<p class="empty">No employees yet.</p>';
+  // plans
   document.getElementById('planTable').innerHTML = S.plans.length
-    ? S.plans.map(p => `<tr><td>${p}</td><td>
-        <button class="btn btn-danger btn-sm" onclick="removePlan('${escJ(p)}')">Remove</button>
-      </td></tr>`).join('')
-    : '<tr><td colspan="2" class="empty">No plans yet.</td></tr>';
-  // labor rate matrix
+    ? S.plans.map(p => `<tr>
+        <td>${p}</td>
+        <td><input type="number" min="0" step="0.01" placeholder="$0.00"
+          value="${S.contracts[p]||''}"
+          onchange="setContract('${ej(p)}',this.value)"
+          style="width:110px"></td>
+        <td><button class="btn btn-danger btn-xs" onclick="removePlan('${ej(p)}')">Remove</button></td>
+      </tr>`).join('')
+    : '<tr><td colspan="3" class="empty">No plans yet.</td></tr>';
+  // rate matrix
   const rm = document.getElementById('rateMatrix');
   if(!empNames.length || !S.plans.length) {
-    rm.innerHTML = '<p class="empty">Add employees and plans to set labor rates.</p>';
+    rm.innerHTML = '<p class="empty">Add employees and plans to set rates.</p>';
   } else {
-    rm.innerHTML = `<table><thead><tr><th>Employee</th>
-      ${S.plans.map(p=>`<th>${p}</th>`).join('')}</tr></thead>
+    rm.innerHTML = `<table><thead><tr><th>Employee</th>${S.plans.map(p=>`<th>${p}</th>`).join('')}</tr></thead>
       <tbody>${empNames.map(e=>`<tr><td><strong>${e}</strong></td>
         ${S.plans.map(p=>`<td><input type="number" min="0" step="0.01" placeholder="$0"
           value="${(S.rates[e]&&S.rates[e][p])||''}"
-          onchange="setRate('${escJ(e)}','${escJ(p)}',this.value)"
+          onchange="setRate('${ej(e)}','${ej(p)}',this.value)"
           style="width:80px"></td>`).join('')}</tr>`).join('')}
       </tbody></table>`;
   }
-  // contract matrix
-  const cm = document.getElementById('contractMatrix');
-  if(!S.plans.length) {
-    cm.innerHTML = '<p class="empty">Add plans to set HC contract values.</p>';
-  } else {
-    cm.innerHTML = `<table><thead><tr><th>KWells Construction</th>
-      ${S.plans.map(p=>`<th>${p}</th>`).join('')}</tr></thead>
-      <tbody><tr><td><strong>HC Contract Value</strong></td>
-        ${S.plans.map(p=>`<td><input type="number" min="0" step="0.01" placeholder="$0"
-          value="${S.contracts[p]||''}"
-          onchange="setContract('${escJ(p)}',this.value)"
-          style="width:90px"></td>`).join('')}
-      </tr></tbody></table>`;
-  }
+  // cost codes
+  document.getElementById('costCodeTable').innerHTML = S.costCodes.length
+    ? S.costCodes.map(c => `<tr><td>${c}</td>
+        <td><button class="btn btn-danger btn-xs" onclick="removeCostCode('${ej(c)}')">Remove</button></td>
+      </tr>`).join('')
+    : '<tr><td colspan="2" class="empty">No cost codes yet.</td></tr>';
 }
 
-// ══════════════════════════════════════════════════════════════ ENTRY
-let entryRows = [];
-function renderEntryTable() {
-  const wrap = document.getElementById('entryTableWrap');
-  const empNames = Object.keys(S.employees);
-  if(!empNames.length || !S.plans.length) {
-    wrap.innerHTML = '<p class="empty">Go to <strong>Setup</strong> tab to add employees and plans first.</p>'; return;
+// ══════════════════════════════ JOBS
+function openAddJobModal() {
+  openModal(`
+    <h2>🏠 New Job / Address</h2>
+    <label>Street Address</label>
+    <input id="mJobAddr" placeholder="e.g. 123 Park Rd, Edmond OK">
+    <label>Plan / Series</label>
+    <select id="mJobPlan">
+      <option value="">-- Select Plan --</option>
+      ${S.plans.map(p=>`<option value="${ej(p)}">${p}</option>`).join('')}
+    </select>
+    <label>Notes (optional)</label>
+    <textarea id="mJobNotes" placeholder="Any additional notes..."></textarea>
+    <div class="action-row" style="margin-top:14px">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="addJob()">Create Job</button>
+    </div>
+  `);
+}
+function addJob() {
+  const addr = document.getElementById('mJobAddr').value.trim();
+  const plan = document.getElementById('mJobPlan').value;
+  const notes = document.getElementById('mJobNotes').value.trim();
+  if(!addr) { toast('Address required', true); return; }
+  if(!plan) { toast('Select a plan', true); return; }
+  S.jobs.push({ id:uid(), address:addr, plan, status:'open', createdAt:today(), pos:[], notes, softClosedAt:null, hardClosedAt:null });
+  save(); closeModal(); renderJobs(); toast('Job created');
+}
+function openAddPOModal(jobId) {
+  const job = S.jobs.find(j=>j.id===jobId);
+  if(!job) return;
+  openModal(`
+    <h2>➕ Add PO to ${job.address}</h2>
+    <label>HC PO Number</label>
+    <input id="mPONum" placeholder="e.g. PO-2024-00123">
+    <label>Cost Code / Trade Scope</label>
+    <select id="mPOCode">
+      <option value="">-- Select Cost Code --</option>
+      ${S.costCodes.map(c=>`<option value="${ej(c)}">${c}</option>`).join('')}
+    </select>
+    <label>Contract Value ($) <span style="font-size:.72rem;color:#718096">auto-filled from plan if set</span></label>
+    <input type="number" id="mPOValue" min="0" step="0.01" placeholder="0.00" value="${S.contracts[job.plan]||''}">
+    <label>Notes</label>
+    <textarea id="mPONotes" placeholder="Scope notes..."></textarea>
+    <div class="action-row" style="margin-top:14px">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="addPO('${jobId}')">Add PO</button>
+    </div>
+  `);
+}
+function addPO(jobId) {
+  const job = S.jobs.find(j=>j.id===jobId);
+  if(!job) return;
+  const poNum = document.getElementById('mPONum').value.trim();
+  const costCode = document.getElementById('mPOCode').value;
+  const val = parseFloat(document.getElementById('mPOValue').value)||0;
+  const notes = document.getElementById('mPONotes').value.trim();
+  if(!poNum) { toast('PO# required', true); return; }
+  job.pos.push({ id:uid(), poNum, costCode, contractValue:val, notes, laborEntries:[], epos:[] });
+  save(); closeModal(); renderJobs(); toast('PO added');
+}
+function openAddEPOModal(jobId, poId) {
+  openModal(`
+    <h2>⚡ Add EPO</h2>
+    <label>EPO Number</label>
+    <input id="mEPONum" placeholder="e.g. HC-2774-12345">
+    <label>Description</label>
+    <textarea id="mEPODesc" placeholder="e.g. Return trip - insufficient material quantity"></textarea>
+    <label>EPO Income (what HC pays) ($)</label>
+    <input type="number" id="mEPOIncome" min="0" step="0.01" placeholder="0.00">
+    <h3 style="margin-top:14px">Labor Cost to Perform EPO</h3>
+    <div id="mEPOLaborLines">
+      <div class="epo-subline" id="mEPOLine0">
+        <div class="row">
+          <div class="col-2"><label>Description</label><input placeholder="e.g. Return trip labor"></div>
+          <div class="col"><label>Type</label>
+            <select onchange="toggleEPOLineType(0,this.value)">
+              <option value="flat">Flat Fee</option>
+              <option value="hourly">Hourly</option>
+            </select>
+          </div>
+        </div>
+        <div class="row" style="margin-top:6px" id="mEPOLineInputs0">
+          <div class="col"><label>Amount ($)</label><input type="number" min="0" step="0.01" placeholder="0.00" id="mEPOLineAmt0"></div>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-secondary btn-sm" style="margin-top:8px" onclick="addEPOLaborLine()">+ Add Labor Line</button>
+    <div class="action-row" style="margin-top:14px">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEPO('${jobId}','${poId}')">Save EPO</button>
+    </div>
+  `);
+  window._epoLineCount = 1;
+}
+function toggleEPOLineType(idx, type) {
+  const wrap = document.getElementById(`mEPOLineInputs${idx}`);
+  if(type==='hourly') {
+    wrap.innerHTML = `<div class="col"><label>Rate ($/hr)</label><input type="number" min="0" step="0.01" placeholder="0.00" id="mEPOLineRate${idx}"></div>
+      <div class="col"><label>Hours</label><input type="number" min="0" step="0.25" placeholder="0" id="mEPOLineHrs${idx}"></div>`;
+  } else {
+    wrap.innerHTML = `<div class="col"><label>Amount ($)</label><input type="number" min="0" step="0.01" placeholder="0.00" id="mEPOLineAmt${idx}"></div>`;
   }
-  if(!entryRows.length) entryRows = [newRow()];
-  wrap.innerHTML = `<div class="overflow-x"><table class="entry-table">
-    <thead><tr><th>Employee</th><th>Plan / Series</th><th>Qty</th><th>Rate</th><th>Gross</th><th>Est. Tax</th><th>Net</th><th class="no-print"></th></tr></thead>
-    <tbody id="entryBody"></tbody>
+}
+function addEPOLaborLine() {
+  const idx = window._epoLineCount++;
+  const wrap = document.getElementById('mEPOLaborLines');
+  const div = document.createElement('div');
+  div.className = 'epo-subline'; div.id = `mEPOLine${idx}`;
+  div.style.marginTop = '8px';
+  div.innerHTML = `<div class="row">
+    <div class="col-2"><label>Description</label><input placeholder="Labor description"></div>
+    <div class="col"><label>Type</label>
+      <select onchange="toggleEPOLineType(${idx},this.value)">
+        <option value="flat">Flat Fee</option>
+        <option value="hourly">Hourly</option>
+      </select>
+    </div>
+  </div>
+  <div class="row" style="margin-top:6px" id="mEPOLineInputs${idx}">
+    <div class="col"><label>Amount ($)</label><input type="number" min="0" step="0.01" placeholder="0.00" id="mEPOLineAmt${idx}"></div>
+  </div>`;
+  wrap.appendChild(div);
+}
+function saveEPO(jobId, poId) {
+  const job = S.jobs.find(j=>j.id===jobId);
+  if(!job) return;
+  const po = job.pos.find(p=>p.id===poId);
+  if(!po) return;
+  const epoNum = document.getElementById('mEPONum').value.trim();
+  const desc = document.getElementById('mEPODesc').value.trim();
+  const income = parseFloat(document.getElementById('mEPOIncome').value)||0;
+  if(!epoNum) { toast('EPO# required', true); return; }
+  const laborLines = [];
+  for(let i=0; i<(window._epoLineCount||1); i++) {
+    const lineEl = document.getElementById(`mEPOLine${i}`);
+    if(!lineEl) continue;
+    const descEl = lineEl.querySelector('input[placeholder]');
+    const typeEl = lineEl.querySelector('select');
+    const lineDesc = descEl ? descEl.value.trim() : '';
+    const lineType = typeEl ? typeEl.value : 'flat';
+    let amt = 0;
+    if(lineType==='hourly') {
+      const rate = parseFloat(document.getElementById(`mEPOLineRate${i}`)?.value)||0;
+      const hrs = parseFloat(document.getElementById(`mEPOLineHrs${i}`)?.value)||0;
+      amt = rate * hrs;
+      laborLines.push({ desc:lineDesc, type:'hourly', rate, hours:hrs, amt });
+    } else {
+      amt = parseFloat(document.getElementById(`mEPOLineAmt${i}`)?.value)||0;
+      laborLines.push({ desc:lineDesc, type:'flat', amt });
+    }
+  }
+  po.epos.push({ id:uid(), epoNum, description:desc, incomeAmt:income, laborLines, createdAt:today() });
+  save(); closeModal(); renderJobs(); toast('EPO saved');
+}
+function softCloseJob(jobId) {
+  if(!confirm('Soft close this job? Base PO work is complete and base pay will be calculated. EPOs may still be open.')) return;
+  const job = S.jobs.find(j=>j.id===jobId);
+  if(!job) return;
+  job.status = 'soft'; job.softClosedAt = today();
+  save(); renderJobs(); toast('Job soft closed — base pay locked');
+}
+function hardCloseJob(jobId) {
+  if(!confirm('Hard close this job? All EPOs are settled. This finalizes the complete P&L.')) return;
+  const job = S.jobs.find(j=>j.id===jobId);
+  if(!job) return;
+  job.status = 'closed'; job.hardClosedAt = today();
+  save(); renderJobs(); toast('Job hard closed — P&L finalized');
+}
+function reopenJob(jobId) {
+  if(!confirm('Reopen this job?')) return;
+  const job = S.jobs.find(j=>j.id===jobId);
+  if(!job) return;
+  job.status = 'open'; job.softClosedAt = null; job.hardClosedAt = null;
+  save(); renderJobs(); toast('Job reopened');
+}
+function deleteJob(jobId) {
+  if(!confirm('Delete this job and all associated data? This cannot be undone.')) return;
+  S.jobs = S.jobs.filter(j=>j.id!==jobId);
+  save(); renderJobs(); toast('Job deleted');
+}
+function deletePO(jobId, poId) {
+  if(!confirm('Delete this PO?')) return;
+  const job = S.jobs.find(j=>j.id===jobId);
+  if(!job) return;
+  job.pos = job.pos.filter(p=>p.id!==poId);
+  save(); renderJobs();
+}
+function deleteEPO(jobId, poId, epoId) {
+  if(!confirm('Delete this EPO?')) return;
+  const job = S.jobs.find(j=>j.id===jobId);
+  if(!job) return;
+  const po = job.pos.find(p=>p.id===poId);
+  if(!po) return;
+  po.epos = po.epos.filter(e=>e.id!==epoId);
+  save(); renderJobs();
+}
+function toggleSection(id) {
+  const el = document.getElementById(id);
+  const ch = document.getElementById('ch_'+id);
+  if(el) { const open = el.style.display!=='none'; el.style.display=open?'none':'block'; if(ch) ch.className='chevron'+(open?'':' open'); }
+}
+function jobCalc(job) {
+  // Get payroll labor tied to this job's POs
+  let totalBaseLabor = 0;
+  let totalEPOIncome = 0;
+  let totalEPOLabor = 0;
+  let totalBaseRevenue = 0;
+  job.pos.forEach(po => {
+    totalBaseRevenue += po.contractValue || 0;
+    // Labor from payroll weeks tied to this PO
+    S.weeks.forEach(w => {
+      w.entries.filter(e => e.poId === po.id).forEach(e => {
+        totalBaseLabor += e.rate * e.qty;
+      });
+    });
+    po.epos.forEach(epo => {
+      totalEPOIncome += epo.incomeAmt || 0;
+      epo.laborLines.forEach(l => { totalEPOLabor += l.amt || 0; });
+    });
+  });
+  const baseMargin = totalBaseRevenue - totalBaseLabor;
+  const epoMargin = totalEPOIncome - totalEPOLabor;
+  const totalRevenue = totalBaseRevenue + totalEPOIncome;
+  const totalCost = totalBaseLabor + totalEPOLabor;
+  const netPL = totalRevenue - totalCost;
+  return { totalBaseRevenue, totalBaseLabor, baseMargin, totalEPOIncome, totalEPOLabor, epoMargin, totalRevenue, totalCost, netPL };
+}
+function renderJobs() {
+  const filter = document.getElementById('jobStatusFilter')?.value || '';
+  const div = document.getElementById('jobsList');
+  let jobs = S.jobs;
+  if(filter) jobs = jobs.filter(j=>j.status===filter);
+  if(!jobs.length) { div.innerHTML='<div class="card"><p class="empty">No jobs yet. Click "+ New Job / Address" to get started.</p></div>'; return; }
+  div.innerHTML = jobs.map(job => {
+    const calc = jobCalc(job);
+    const statusBadge = job.status==='open' ? '<span class="badge bg-blue">Open</span>'
+      : job.status==='soft' ? '<span class="badge bg-yellow">Soft Closed</span>'
+      : '<span class="badge bg-green">Hard Closed</span>';
+    const phaseSteps = ['open','soft','closed'];
+    const phaseIdx = phaseSteps.indexOf(job.status);
+    return `<div class="address-card">
+      <div class="address-header" onclick="toggleSection('job_${job.id}')">
+        <span class="chevron open" id="ch_job_${job.id}">▶</span>
+        <strong style="font-size:.95rem">${job.address}</strong>
+        ${statusBadge}
+        <span class="badge bg-gray">${job.plan}</span>
+        <span class="badge ${calc.netPL>=0?'bg-green':'bg-red'}" style="margin-left:auto">
+          ${calc.netPL>=0?'▲':'▼'} $${Math.abs(calc.netPL).toFixed(2)}
+        </span>
+      </div>
+      <div class="address-body" id="job_${job.id}">
+        <div class="phase-indicator">
+          <div class="phase-step ${phaseIdx>=0?'done':''}">📋 Open</div>
+          <div class="phase-step ${phaseIdx>=1?'done':''}">🔒 Soft Close<br><span style="font-size:.68rem;font-weight:400">${job.softClosedAt?fmt(job.softClosedAt):'Base pay pending'}</span></div>
+          <div class="phase-step ${phaseIdx>=2?'done':''}">✅ Hard Close<br><span style="font-size:.68rem;font-weight:400">${job.hardClosedAt?fmt(job.hardClosedAt):'EPOs pending'}</span></div>
+        </div>
+        <div class="stat-grid">
+          <div class="stat"><div class="val">$${calc.totalBaseRevenue.toFixed(2)}</div><div class="lbl">Base Revenue</div></div>
+          <div class="stat orange"><div class="val">$${calc.totalBaseLabor.toFixed(2)}</div><div class="lbl">Base Labor</div></div>
+          <div class="stat purple"><div class="val">$${calc.totalEPOIncome.toFixed(2)}</div><div class="lbl">EPO Income</div></div>
+          <div class="stat orange"><div class="val">$${calc.totalEPOLabor.toFixed(2)}</div><div class="lbl">EPO Labor</div></div>
+          <div class="stat ${calc.netPL>=0?'':'red'}"><div class="val">$${calc.netPL.toFixed(2)}</div><div class="lbl">Net P&L</div></div>
+        </div>
+        <div class="action-row no-print" style="margin-bottom:12px">
+          <button class="btn btn-blue btn-sm" onclick="openAddPOModal('${job.id}')">+ Add PO</button>
+          ${job.status==='open'?`<button class="btn btn-warning btn-sm" onclick="softCloseJob('${job.id}')">🔒 Soft Close</button>`:''}
+          ${job.status==='soft'?`<button class="btn btn-success btn-sm" onclick="hardCloseJob('${job.id}')">✅ Hard Close</button>`:''}
+          ${job.status!=='open'?`<button class="btn btn-secondary btn-sm" onclick="reopenJob('${job.id}')">↩ Reopen</button>`:''}
+          <button class="btn btn-danger btn-sm" onclick="deleteJob('${job.id}')">🗑 Delete</button>
+        </div>
+        ${job.pos.length ? job.pos.map(po => {
+          const poEPOIncome = po.epos.reduce((s,e)=>s+e.incomeAmt,0);
+          const poEPOLabor = po.epos.reduce((s,e)=>s+e.laborLines.reduce((a,l)=>a+l.amt,0),0);
+          const poLabor = S.weeks.reduce((s,w)=>s+w.entries.filter(e=>e.poId===po.id).reduce((a,e)=>a+(e.rate*e.qty),0),0);
+          const poNet = (po.contractValue||0) + poEPOIncome - poLabor - poEPOLabor;
+          return `<div class="po-card">
+            <div class="po-header">
+              <span class="badge bg-purple">${po.costCode||'No Code'}</span>
+              <strong>${po.poNum}</strong>
+              <span style="font-size:.78rem;color:#718096">Base: $${(po.contractValue||0).toFixed(2)}</span>
+              <span class="badge ${poNet>=0?'bg-green':'bg-red'}" style="margin-left:auto">$${poNet.toFixed(2)}</span>
+            </div>
+            <div class="po-body">
+              ${po.notes?`<p style="font-size:.78rem;color:#718096;margin-bottom:10px">${po.notes}</p>`:''}
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                <strong style="font-size:.82rem">EPOs (${po.epos.length})</strong>
+                <button class="btn btn-warning btn-xs no-print" onclick="openAddEPOModal('${job.id}','${po.id}')">+ Add EPO</button>
+              </div>
+              ${po.epos.length ? po.epos.map(epo => {
+                const epoLaborTotal = epo.laborLines.reduce((s,l)=>s+l.amt,0);
+                const epoNet = epo.incomeAmt - epoLaborTotal;
+                return `<div class="epo-row">
+                  <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap">
+                    <div>
+                      <span class="badge bg-orange">${epo.epoNum}</span>
+                      <span style="font-size:.8rem;margin-left:6px">${epo.description||''}</span>
+                    </div>
+                    <div style="display:flex;gap:6px;align-items:center">
+                      <span class="badge ${epoNet>=0?'bg-green':'bg-red'}">$${epoNet.toFixed(2)}</span>
+                      <button class="btn btn-danger btn-xs no-print" onclick="deleteEPO('${job.id}','${po.id}','${epo.id}')">✕</button>
+                    </div>
+                  </div>
+                  <div style="margin-top:8px;font-size:.78rem">
+                    <div class="pl-row"><span>EPO Income</span><span style="color:#276749">+$${epo.incomeAmt.toFixed(2)}</span></div>
+                    ${epo.laborLines.map(l=>`<div class="pl-row">
+                      <span>${l.desc||'Labor'} ${l.type==='hourly'?`(${l.hours}hrs @ $${l.rate}/hr)`:''}</span>
+                      <span style="color:#c53030">-$${l.amt.toFixed(2)}</span>
+                    </div>`).join('')}
+                    <div class="pl-row subtotal"><span>EPO Net</span><span style="${epoNet>=0?'color:#276749':'color:#c53030'}">$${epoNet.toFixed(2)}</span></div>
+                  </div>
+                </div>`;
+              }).join('') : '<p style="font-size:.78rem;color:#a0aec0;text-align:center;padding:8px">No EPOs on this PO</p>'}
+              <hr class="divider">
+              <div style="font-size:.78rem">
+                <div class="pl-row"><span>Base Contract</span><span>$${(po.contractValue||0).toFixed(2)}</span></div>
+                <div class="pl-row"><span>Labor (from payroll)</span><span style="color:#c53030">-$${poLabor.toFixed(2)}</span></div>
+                <div class="pl-row"><span>EPO Net</span><span style="${poEPOIncome-poEPOLabor>=0?'color:#276749':'color:#c53030'}">$${(poEPOIncome-poEPOLabor).toFixed(2)}</span></div>
+                <div class="pl-row subtotal ${poNet<0?'loss':''}"><span>PO Net P&L</span><span>$${poNet.toFixed(2)}</span></div>
+              </div>
+              <div class="action-row no-print">
+                <button class="btn btn-danger btn-xs" onclick="deletePO('${job.id}','${po.id}')">Delete PO</button>
+              </div>
+            </div>
+          </div>`;
+        }).join('') : '<p style="font-size:.82rem;color:#a0aec0;text-align:center;padding:12px">No POs added yet.</p>'}
+        ${job.notes?`<p style="font-size:.78rem;color:#718096;margin-top:8px">Notes: ${job.notes}</p>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════ PAYROLL
+let payrollRows = [];
+function renderPayroll() {
+  const wrap = document.getElementById('payrollTableWrap');
+  const empNames = Object.keys(S.employees);
+  const allPOs = S.jobs.filter(j=>j.status!=='closed').flatMap(j=>j.pos.map(p=>({...p, address:j.address, jobId:j.id})));
+  if(!empNames.length || !S.plans.length) {
+    wrap.innerHTML='<p class="empty">Go to Setup to add employees and plans first.</p>'; return;
+  }
+  if(!payrollRows.length) payrollRows=[newPRow()];
+  wrap.innerHTML=`<div class="overflow-x"><table>
+    <thead><tr><th>Employee</th><th>PO / Job</th><th>Plan</th><th>Qty</th><th>Rate</th><th>Gross</th><th>Est.Tax</th><th>Net</th><th class="no-print"></th></tr></thead>
+    <tbody id="payrollBody"></tbody>
     <tfoot><tr>
-      <td colspan="4" style="text-align:right;font-weight:600;padding:9px 12px">Totals:</td>
-      <td id="totalGross" style="font-weight:700;color:#2d6a4f;padding:9px 12px">$0.00</td>
-      <td id="totalTax" style="font-weight:700;color:#c53030;padding:9px 12px">$0.00</td>
-      <td id="totalNet" style="font-weight:700;color:#2b6cb0;padding:9px 12px">$0.00</td>
+      <td colspan="5" style="text-align:right;font-weight:700;padding:8px 10px">Totals:</td>
+      <td id="pTotalGross" style="font-weight:700;color:#276749;padding:8px 10px">$0.00</td>
+      <td id="pTotalTax" style="font-weight:700;color:#c53030;padding:8px 10px">$0.00</td>
+      <td id="pTotalNet" style="font-weight:700;color:#2b6cb0;padding:8px 10px">$0.00</td>
       <td></td>
     </tr></tfoot>
   </table></div>`;
-  renderEntryRows();
+  renderPayrollRows(allPOs);
 }
-function newRow() { return { emp:'', plan:'', qty:1 }; }
-function addEntryRow() { entryRows.push(newRow()); renderEntryRows(); }
-function removeEntryRow(i) { entryRows.splice(i,1); if(!entryRows.length) entryRows=[newRow()]; renderEntryRows(); }
-function renderEntryRows() {
-  const body = document.getElementById('entryBody');
+function newPRow(){return{emp:'',poId:'',plan:'',qty:1};}
+function addPayrollRow(){payrollRows.push(newPRow());const allPOs=S.jobs.filter(j=>j.status!=='closed').flatMap(j=>j.pos.map(p=>({...p,address:j.address,jobId:j.id})));renderPayrollRows(allPOs);}
+function removePayrollRow(i){payrollRows.splice(i,1);if(!payrollRows.length)payrollRows=[newPRow()];const allPOs=S.jobs.filter(j=>j.status!=='closed').flatMap(j=>j.pos.map(p=>({...p,address:j.address,jobId:j.id})));renderPayrollRows(allPOs);}
+function renderPayrollRows(allPOs) {
+  const body=document.getElementById('payrollBody');
   if(!body) return;
-  const empNames = Object.keys(S.employees);
-  let tGross=0, tTax=0, tNet=0;
-  body.innerHTML = entryRows.map((r,i) => {
-    const rate = (S.rates[r.emp] && S.rates[r.emp][r.plan]) || 0;
-    const gross = rate * (parseFloat(r.qty)||0);
-    const empData = S.employees[r.emp];
-    const tax = empData && empData.type==='w2' ? calcFederalTax(gross, empData) + calcOKTax(gross, empData) : 0;
-    const net = gross - tax;
-    tGross+=gross; tTax+=tax; tNet+=net;
+  const empNames=Object.keys(S.employees);
+  let tG=0,tT=0,tN=0;
+  body.innerHTML=payrollRows.map((r,i)=>{
+    const emp=S.employees[r.emp];
+    const rate=(S.rates[r.emp]&&S.rates[r.emp][r.plan])||0;
+    const gross=rate*(parseFloat(r.qty)||0);
+    const tax=emp&&emp.type==='w2'?calcFedTax(gross,emp)+calcOKTax(gross,emp):0;
+    const net=gross-tax;
+    tG+=gross;tT+=tax;tN+=net;
     return `<tr>
-      <td><select onchange="entryRows[${i}].emp=this.value;entryRows[${i}].plan='';renderEntryRows()">
-        <option value="">-- Employee --</option>
-        ${empNames.map(e=>`<option value="${escJ(e)}" ${r.emp===e?'selected':''}>${e}</option>`).join('')}
+      <td><select onchange="payrollRows[${i}].emp=this.value;payrollRows[${i}].plan='';const p=S.jobs.filter(j=>j.status!=='closed').flatMap(j=>j.pos.map(po=>({...po,address:j.address,jobId:j.id})));renderPayrollRows(p)">
+        <option value="">-- Emp --</option>
+        ${empNames.map(e=>`<option value="${ej(e)}" ${r.emp===e?'selected':''}>${e}</option>`).join('')}
       </select></td>
-      <td><select onchange="entryRows[${i}].plan=this.value;renderEntryRows()">
+      <td><select onchange="payrollRows[${i}].poId=this.value;const p2=S.jobs.filter(j=>j.status!=='closed').flatMap(j=>j.pos.map(po=>({...po,address:j.address,jobId:j.id})));renderPayrollRows(p2)">
+        <option value="">-- PO --</option>
+        ${allPOs.map(p=>`<option value="${p.id}" ${r.poId===p.id?'selected':''}>${p.poNum} · ${p.address}</option>`).join('')}
+      </select></td>
+      <td><select onchange="payrollRows[${i}].plan=this.value;const p3=S.jobs.filter(j=>j.status!=='closed').flatMap(j=>j.pos.map(po=>({...po,address:j.address,jobId:j.id})));renderPayrollRows(p3)">
         <option value="">-- Plan --</option>
-        ${S.plans.map(p=>`<option value="${escJ(p)}" ${r.plan===p?'selected':''}>${p}</option>`).join('')}
+        ${S.plans.map(p=>`<option value="${ej(p)}" ${r.plan===p?'selected':''}>${p}</option>`).join('')}
       </select></td>
-      <td><input type="number" min="1" value="${r.qty}" style="width:55px"
-        onchange="entryRows[${i}].qty=this.value;renderEntryRows()"></td>
+      <td><input type="number" min="1" value="${r.qty}" style="width:50px"
+        onchange="payrollRows[${i}].qty=this.value;const p4=S.jobs.filter(j=>j.status!=='closed').flatMap(j=>j.pos.map(po=>({...po,address:j.address,jobId:j.id})));renderPayrollRows(p4)"></td>
       <td>${rate?'$'+rate.toFixed(2):'—'}</td>
       <td style="color:#276749;font-weight:600">${gross?'$'+gross.toFixed(2):'—'}</td>
-      <td style="color:#c53030">${tax?'-$'+tax.toFixed(2): empData&&empData.type==='1099'?'<span style="font-size:.75rem;color:#718096">1099</span>':'—'}</td>
+      <td style="color:#c53030;font-size:.78rem">${emp&&emp.type==='w2'&&tax?'-$'+tax.toFixed(2):emp&&emp.type==='1099'?'1099':'—'}</td>
       <td style="color:#2b6cb0;font-weight:600">${net?'$'+net.toFixed(2):'—'}</td>
-      <td class="no-print"><button class="btn btn-danger btn-sm" onclick="removeEntryRow(${i})">✕</button></td>
+      <td class="no-print"><button class="btn btn-danger btn-xs" onclick="removePayrollRow(${i})">✕</button></td>
     </tr>`;
   }).join('');
-  const g=document.getElementById('totalGross');
-  const tx=document.getElementById('totalTax');
-  const tn=document.getElementById('totalNet');
-  if(g) g.textContent='$'+tGross.toFixed(2);
-  if(tx) tx.textContent=tTax?'-$'+tTax.toFixed(2):'$0.00';
-  if(tn) tn.textContent='$'+tNet.toFixed(2);
+  const g=document.getElementById('pTotalGross');
+  const t=document.getElementById('pTotalTax');
+  const n=document.getElementById('pTotalNet');
+  if(g)g.textContent='$'+tG.toFixed(2);
+  if(t)t.textContent=tT?'-$'+tT.toFixed(2):'$0.00';
+  if(n)n.textContent='$'+tN.toFixed(2);
 }
-function saveWeek() {
-  const dateEl = document.getElementById('weekDate');
-  if(!dateEl.value) { toast('Select a week-ending date', true); return; }
-  const valid = entryRows.filter(r => r.emp && r.plan);
-  if(!valid.length) { toast('No complete entries to save', true); return; }
-  const insurance = parseFloat(document.getElementById('weeklyInsurance').value)||0;
-  const entries = valid.map(r => ({
-    emp: r.emp, plan: r.plan, qty: parseFloat(r.qty)||1,
-    rate: (S.rates[r.emp]&&S.rates[r.emp][r.plan])||0,
-    empType: S.employees[r.emp]?.type||'1099',
-    empFiling: S.employees[r.emp]?.filing||'single',
-    empAllowances: S.employees[r.emp]?.allowances||0
+function savePayrollWeek() {
+  const dateEl=document.getElementById('weekDate');
+  if(!dateEl.value){toast('Select week-ending date',true);return;}
+  const valid=payrollRows.filter(r=>r.emp&&r.plan);
+  if(!valid.length){toast('No complete entries',true);return;}
+  const insurance=parseFloat(document.getElementById('weeklyInsurance').value)||0;
+  const entries=valid.map(r=>({
+    emp:r.emp,poId:r.poId,plan:r.plan,qty:parseFloat(r.qty)||1,
+    rate:(S.rates[r.emp]&&S.rates[r.emp][r.plan])||0,
+    empType:S.employees[r.emp]?.type||'1099',
+    empFiling:S.employees[r.emp]?.filing||'single',
+    empAllowances:S.employees[r.emp]?.allowances||0
   }));
-  S.weeks = S.weeks.filter(w => w.date !== dateEl.value);
-  S.weeks.push({ date: dateEl.value, insurance, entries });
-  S.weeks.sort((a,b) => b.date.localeCompare(a.date));
+  S.weeks=S.weeks.filter(w=>w.date!==dateEl.value);
+  S.weeks.push({date:dateEl.value,insurance,entries});
+  S.weeks.sort((a,b)=>b.date.localeCompare(a.date));
   save();
-  renderWeekSummary(dateEl.value, entries, insurance);
-  entryRows = [newRow()]; renderEntryTable();
-  document.getElementById('weeklyInsurance').value = '';
-  toast('Week saved! ✓');
-}
-function renderWeekSummary(date, entries, insurance) {
-  const byEmp = {};
-  entries.forEach(e => {
-    if(!byEmp[e.emp]) byEmp[e.emp] = { gross:0, tax:0, type:e.empType };
-    const gross = e.rate*e.qty;
-    const empData = S.employees[e.emp] || { type:e.empType, filing:e.empFiling, allowances:e.empAllowances };
-    const tax = e.empType==='w2' ? calcFederalTax(gross,empData)+calcOKTax(gross,empData) : 0;
-    byEmp[e.emp].gross += gross;
-    byEmp[e.emp].tax += tax;
+  // render summary
+  const byEmp={};
+  entries.forEach(e=>{
+    if(!byEmp[e.emp])byEmp[e.emp]={gross:0,tax:0,type:e.empType};
+    const gross=e.rate*e.qty;
+    const empD=S.employees[e.emp]||{type:e.empType,filing:e.empFiling,allowances:e.empAllowances};
+    const tax=e.empType==='w2'?calcFedTax(gross,empD)+calcOKTax(gross,empD):0;
+    byEmp[e.emp].gross+=gross;byEmp[e.emp].tax+=tax;
   });
-  const totalGross = Object.values(byEmp).reduce((s,v)=>s+v.gross,0);
-  const totalTax = Object.values(byEmp).reduce((s,v)=>s+v.tax,0);
-  const totalNet = totalGross - totalTax;
-  document.getElementById('weekSummary').innerHTML =
-    `<p style="color:#718096;font-size:.82rem;margin-bottom:14px">Week ending ${fmt(date)}</p>
-    <table><thead><tr><th>Employee</th><th>Type</th><th>Gross Pay</th><th>Est. Withholding</th><th>Est. Net Pay</th></tr></thead>
+  const tG=Object.values(byEmp).reduce((s,v)=>s+v.gross,0);
+  const tT=Object.values(byEmp).reduce((s,v)=>s+v.tax,0);
+  document.getElementById('payrollSummary').innerHTML=`
+    <p style="font-size:.78rem;color:#718096;margin-bottom:12px">Week ending ${fmt(dateEl.value)}</p>
+    <table><thead><tr><th>Employee</th><th>Type</th><th>Gross</th><th>Est. Tax</th><th>Net</th></tr></thead>
     <tbody>${Object.entries(byEmp).map(([n,v])=>`<tr>
       <td>${n}</td>
-      <td><span class="badge ${v.type==='w2'?'badge-blue':'badge-orange'}">${v.type.toUpperCase()}</span></td>
-      <td style="color:#276749;font-weight:600">$${v.gross.toFixed(2)}</td>
+      <td><span class="badge ${v.type==='w2'?'bg-blue':'bg-orange'}">${v.type.toUpperCase()}</span></td>
+      <td style="color:#276749">$${v.gross.toFixed(2)}</td>
       <td style="color:#c53030">${v.type==='w2'?'-$'+v.tax.toFixed(2):'Self-pay'}</td>
-      <td style="color:#2b6cb0;font-weight:600">$${(v.gross-v.tax).toFixed(2)}</td>
+      <td style="color:#2b6cb0">$${(v.gross-v.tax).toFixed(2)}</td>
     </tr>`).join('')}
-    <tr style="background:#f0fdf4;font-weight:700">
-      <td colspan="2">TOTAL</td>
-      <td style="color:#276749">$${totalGross.toFixed(2)}</td>
-      <td style="color:#c53030">${totalTax?'-$'+totalTax.toFixed(2):'—'}</td>
-      <td style="color:#2b6cb0">$${totalNet.toFixed(2)}</td>
+    <tr style="background:#f0fdf4;font-weight:700"><td colspan="2">TOTAL</td>
+      <td style="color:#276749">$${tG.toFixed(2)}</td>
+      <td style="color:#c53030">${tT?'-$'+tT.toFixed(2):'—'}</td>
+      <td style="color:#2b6cb0">$${(tG-tT).toFixed(2)}</td>
     </tr></tbody></table>
-    ${insurance?`<p style="margin-top:12px;font-size:.82rem;color:#718096">WC/Insurance this week: <strong>$${insurance.toFixed(2)}</strong></p>`:''}`;
-  document.getElementById('weekSummaryCard').style.display = 'block';
+    ${insurance?`<p style="margin-top:10px;font-size:.78rem;color:#718096">WC/Insurance: <strong>$${insurance.toFixed(2)}</strong></p>`:''}`;
+  document.getElementById('payrollSummaryCard').style.display='block';
+  payrollRows=[newPRow()]; renderPayroll(); toast('Week saved ✓');
 }
 
-// ══════════════════════════════════════════════════════════════ TAX CALC
-// Federal income tax estimate (2024 withholding tables, weekly pay period approximation)
-function calcFederalTax(gross, emp) {
-  if(!emp || emp.type==='1099') return 0;
-  // Annualize, subtract allowances ($4300/allowance 2024), apply brackets, de-annualize
-  const annual = gross * 52;
-  const allowanceAmt = (emp.allowances||0) * 4300;
-  const taxable = Math.max(0, annual - allowanceAmt);
-  let tax = 0;
-  if(emp.filing === 'married') {
-    const brackets = [[0,0],[23200,.10],[94300,.12],[201050,.22],[383900,.24],[487450,.32],[731200,.35],[Infinity,.37]];
-    tax = applyBrackets(taxable, brackets);
+// ══════════════════════════════ DASHBOARD
+function renderDashboard() {
+  const openJobs=S.jobs.filter(j=>j.status==='open').length;
+  const softJobs=S.jobs.filter(j=>j.status==='soft').length;
+  const closedJobs=S.jobs.filter(j=>j.status==='closed').length;
+  const allCalcs=S.jobs.map(j=>jobCalc(j));
+  const totalRev=allCalcs.reduce((s,c)=>s+c.totalRevenue,0);
+  const totalCost=allCalcs.reduce((s,c)=>s+c.totalCost,0);
+  const totalPL=allCalcs.reduce((s,c)=>s+c.netPL,0);
+  const totalEPOIncome=allCalcs.reduce((s,c)=>s+c.totalEPOIncome,0);
+  const totalEPOLabor=allCalcs.reduce((s,c)=>s+c.totalEPOLabor,0);
+  const epoMargin=totalEPOIncome-totalEPOLabor;
+  const recentWeeks=S.weeks.slice(0,5);
+  const weeklyPayroll=recentWeeks.reduce((s,w)=>s+w.entries.reduce((a,e)=>a+(e.rate*e.qty),0),0);
+  document.getElementById('dashContent').innerHTML=`
+    <div class="card">
+      <h2>📊 LLC Overview</h2>
+      <div class="stat-grid">
+        <div class="stat"><div class="val">${S.jobs.length}</div><div class="lbl">Total Jobs</div></div>
+        <div class="stat blue"><div class="val">${openJobs}</div><div class="lbl">Open</div></div>
+        <div class="stat orange"><div class="val">${softJobs}</div><div class="lbl">Soft Closed</div></div>
+        <div class="stat"><div class="val">${closedJobs}</div><div class="lbl">Hard Closed</div></div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat"><div class="val">$${totalRev.toFixed(0)}</div><div class="lbl">Total Revenue</div></div>
+        <div class="stat orange"><div class="val">$${totalCost.toFixed(0)}</div><div class="lbl">Total Costs</div></div>
+        <div class="stat purple"><div class="val">$${totalEPOIncome.toFixed(0)}</div><div class="lbl">EPO Income</div></div>
+        <div class="stat ${totalPL>=0?'':'red'}"><div class="val">$${totalPL.toFixed(0)}</div><div class="lbl">Net P&L (All Jobs)</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>⚡ EPO Performance</h2>
+      ${S.jobs.length?`
+      <div class="stat-grid">
+        <div class="stat purple"><div class="val">$${totalEPOIncome.toFixed(0)}</div><div class="lbl">Total EPO Billed</div></div>
+        <div class="stat orange"><div class="val">$${totalEPOLabor.toFixed(0)}</div><div class="lbl">EPO Labor Cost</div></div>
+        <div class="stat ${epoMargin>=0?'':'red'}"><div class="val">$${epoMargin.toFixed(0)}</div><div class="lbl">EPO Net Margin</div></div>
+        <div class="stat ${epoMargin>=0?'':'red'}"><div class="val">${totalEPOIncome>0?((epoMargin/totalEPOIncome)*100).toFixed(1)+'%':'—'}</div><div class="lbl">EPO Margin %</div></div>
+      </div>
+      ${epoMargin<0?'<div class="warn-box">⚠️ EPO labor costs are exceeding EPO income. Review pricing on extra work.</div>':
+        epoMargin>0?'<div class="success-box">✅ EPOs are profitable. Margin is positive across current jobs.</div>':''}
+      `:' <p class="empty">No job data yet.</p>'}
+    </div>
+    <div class="card">
+      <h2>💵 Recent Payroll</h2>
+      ${recentWeeks.length?`
+      <table><thead><tr><th>Week</th><th>Entries</th><th>Gross</th><th>Insurance</th></tr></thead>
+      <tbody>${recentWeeks.map(w=>{
+        const gross=w.entries.reduce((s,e)=>s+(e.rate*e.qty),0);
+        return `<tr><td>${fmt(w.date)}</td><td>${w.entries.length}</td><td style="color:#276749">$${gross.toFixed(2)}</td><td>${w.insurance?'$'+w.insurance.toFixed(2):'—'}</td></tr>`;
+      }).join('')}</tbody></table>`:' <p class="empty">No payroll history yet.</p>'}
+    </div>
+    ${S.jobs.filter(j=>j.status!=='closed').length?`
+    <div class="card">
+      <h2>🏠 Active Jobs Snapshot</h2>
+      <table><thead><tr><th>Address</th><th>Plan</th><th>Status</th><th>POs</th><th>EPOs</th><th>Net P&L</th></tr></thead>
+      <tbody>${S.jobs.filter(j=>j.status!=='closed').map(j=>{
+        const c=jobCalc(j);
+        const epoCount=j.pos.reduce((s,p)=>s+p.epos.length,0);
+        return `<tr>
+          <td><a href="#" onclick="showTab('jobs');return false" style="color:#2d6a4f;text-decoration:none;font-weight:600">${j.address}</a></td>
+          <td><span class="badge bg-gray" style="font-size:.7rem">${j.plan}</span></td>
+          <td><span class="badge ${j.status==='open'?'bg-blue':'bg-yellow'}">${j.status}</span></td>
+          <td>${j.pos.length}</td><td>${epoCount}</td>
+          <td style="${c.netPL>=0?'color:#276749':'color:#c53030'};font-weight:700">$${c.netPL.toFixed(2)}</td>
+        </tr>`;
+      }).join('')}</tbody></table>
+    </div>`:''}`;
+}
+
+// ══════════════════════════════ REPORTS
+function renderReports() {
+  const from=document.getElementById('rptFrom').value;
+  const to=document.getElementById('rptTo').value;
+  const statusF=document.getElementById('rptStatus').value;
+  let jobs=S.jobs;
+  if(statusF) jobs=jobs.filter(j=>j.status===statusF);
+  if(from) jobs=jobs.filter(j=>j.createdAt>=from);
+  if(to) jobs=jobs.filter(j=>j.createdAt<=to);
+  const div=document.getElementById('reportsContent');
+  if(!jobs.length){div.innerHTML='<div class="card"><p class="empty">No jobs match the selected filters.</p></div>';return;}
+  let grandRev=0,grandCost=0,grandPL=0,grandEPOIn=0,grandEPOLab=0;
+  div.innerHTML=jobs.map(job=>{
+    const c=jobCalc(job);
+    grandRev+=c.totalRevenue;grandCost+=c.totalCost;grandPL+=c.netPL;
+    grandEPOIn+=c.totalEPOIncome;grandEPOLab+=c.totalEPOLabor;
+    const epoCount=job.pos.reduce((s,p)=>s+p.epos.length,0);
+    return `<div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:14px">
+        <div>
+          <strong style="font-size:1rem">${job.address}</strong>
+          <div style="font-size:.78rem;color:#718096;margin-top:3px">${job.plan} · Created ${fmt(job.createdAt)}</div>
+        </div>
+        <span class="badge ${job.status==='open'?'bg-blue':job.status==='soft'?'bg-yellow':'bg-green'}">${job.status}</span>
+      </div>
+      <div style="display:flex;gap:20px;flex-wrap:wrap;font-size:.82rem">
+        <div style="flex:1;min-width:180px">
+          <strong style="color:#4a5568">Phase 1 — Base</strong>
+          <div class="pl-row"><span>HC Revenue</span><span style="color:#276749">$${c.totalBaseRevenue.toFixed(2)}</span></div>
+          <div class="pl-row"><span>Labor Cost</span><span style="color:#c53030">-$${c.totalBaseLabor.toFixed(2)}</span></div>
+          <div class="pl-row subtotal"><span>Base Margin</span><span style="${c.baseMargin>=0?'color:#276749':'color:#c53030'}">$${c.baseMargin.toFixed(2)}</span></div>
+        </div>
+        <div style="flex:1;min-width:180px">
+          <strong style="color:#4a5568">Phase 2 — EPO (${epoCount})</strong>
+          <div class="pl-row"><span>EPO Income</span><span style="color:#276749">$${c.totalEPOIncome.toFixed(2)}</span></div>
+          <div class="pl-row"><span>EPO Labor</span><span style="color:#c53030">-$${c.totalEPOLabor.toFixed(2)}</span></div>
+          <div class="pl-row subtotal"><span>EPO Margin</span><span style="${c.epoMargin>=0?'color:#276749':'color:#c53030'}">$${c.epoMargin.toFixed(2)}</span></div>
+        </div>
+        <div style="flex:1;min-width:180px">
+          <strong style="color:#4a5568">Job Total</strong>
+          <div class="pl-row"><span>Total Revenue</span><span style="color:#276749">$${c.totalRevenue.toFixed(2)}</span></div>
+          <div class="pl-row"><span>Total Costs</span><span style="color:#c53030">-$${c.totalCost.toFixed(2)}</span></div>
+          <div class="pl-row total ${c.netPL<0?'loss':''}"><span>Net P&L</span><span>$${c.netPL.toFixed(2)}</span></div>
+          ${c.totalRevenue>0?`<div style="font-size:.72rem;color:#718096;margin-top:4px">Margin: ${((c.netPL/c.totalRevenue)*100).toFixed(1)}%</div>`:''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  div.innerHTML+=`<div class="card" style="background:#f0fdf4;border:1px solid #9ae6b4">
+    <h2>LLC Bottom Line — Filtered Period</h2>
+    <div class="stat-grid">
+      <div class="stat"><div class="val">$${grandRev.toFixed(0)}</div><div class="lbl">Total Revenue</div></div>
+      <div class="stat orange"><div class="val">$${grandCost.toFixed(0)}</div><div class="lbl">Total Costs</div></div>
+      <div class="stat purple"><div class="val">$${grandEPOIn.toFixed(0)}</div><div class="lbl">EPO Income</div></div>
+      <div class="stat ${grandPL>=0?'':'red'}"><div class="val">$${grandPL.toFixed(0)}</div><div class="lbl">Net P&L</div></div>
+    </div>
+    ${grandRev>0?`<p style="font-size:.82rem;color:#4a5568;margin-top:8px">Overall margin: <strong>${((grandPL/grandRev)*100).toFixed(1)}%</strong> &nbsp;|&nbsp; EPO contribution: <strong>$${(grandEPOIn-grandEPOLab).toFixed(2)}</strong></p>`:''}
+  </div>`;
+}
+function clearAllHistory() {
+  if(!confirm('Clear ALL data including jobs, payroll, and history? This cannot be undone.')) return;
+  S={ employees:{}, plans:[], contracts:{}, rates:{}, costCodes:[], jobs:[], weeks:[] };
+  save(); renderDashboard(); toast('All data cleared');
+}
+function exportCSV() {
+  let rows=[['Address','Plan','Status','PO#','Cost Code','Base Revenue','Base Labor','EPO Income','EPO Labor','Net P&L']];
+  S.jobs.forEach(j=>{
+    const c=jobCalc(j);
+    j.pos.forEach(po=>{
+      const poLabor=S.weeks.reduce((s,w)=>s+w.entries.filter(e=>e.poId===po.id).reduce((a,e)=>a+(e.rate*e.qty),0),0);
+      const poEPOIn=po.epos.reduce((s,e)=>s+e.incomeAmt,0);
+      const poEPOLab=po.epos.reduce((s,e)=>s+e.laborLines.reduce((a,l)=>a+l.amt,0),0);
+      rows.push([j.address,j.plan,j.status,po.poNum,po.costCode||'',po.contractValue||0,poLabor.toFixed(2),poEPOIn.toFixed(2),poEPOLab.toFixed(2),(((po.contractValue||0)+poEPOIn-poLabor-poEPOLab)).toFixed(2)]);
+    });
+  });
+  dl('data:text/csv;charset=utf-8,'+encodeURIComponent(rows.map(r=>r.map(v=>`"${v}"`).join(',')).join('\n')),'kwells_jobs.csv');
+  toast('CSV exported!');
+}
+
+// ══════════════════════════════ TAX
+function calcFedTax(gross, emp) {
+  if(!emp||emp.type==='1099') return 0;
+  const annual=gross*52;
+  const allowanceAmt=(emp.allowances||0)*4300;
+  const taxable=Math.max(0,annual-allowanceAmt);
+  let tax=0;
+  if(emp.filing==='married'){
+    tax=applyBrackets(taxable,[[0,0],[23200,.10],[94300,.12],[201050,.22],[383900,.24],[487450,.32],[731200,.35],[Infinity,.37]]);
   } else {
-    const brackets = [[0,0],[11600,.10],[47150,.12],[100525,.22],[191950,.24],[243725,.32],[609350,.35],[Infinity,.37]];
-    tax = applyBrackets(taxable, brackets);
+    tax=applyBrackets(taxable,[[0,0],[11600,.10],[47150,.12],[100525,.22],[191950,.24],[243725,.32],[609350,.35],[Infinity,.37]]);
   }
-  // Add FICA (SS 6.2% up to $168600, Medicare 1.45%)
-  const ss = Math.min(annual, 168600) * 0.062;
-  const med = annual * 0.0145;
-  return ((tax + ss + med) / 52);
+  const ss=Math.min(annual,168600)*0.062;
+  const med=annual*0.0145;
+  return (tax+ss+med)/52;
 }
 function calcOKTax(gross, emp) {
-  if(!emp || emp.type==='1099') return 0;
-  const annual = gross * 52;
-  // Oklahoma 2024 brackets (single/married)
-  let tax = 0;
-  if(emp.filing==='married') {
-    const brackets = [[0,0],[1000,.0025],[2500,.0075],[3750,.0175],[4900,.0275],[7200,.0375],[Infinity,.0475]];
-    tax = applyBrackets(annual, brackets);
-  } else {
-    const brackets = [[0,0],[1000,.0025],[2500,.0075],[3750,.0175],[4900,.0275],[7200,.0375],[Infinity,.0475]];
-    tax = applyBrackets(annual, brackets);
-  }
-  return tax / 52;
+  if(!emp||emp.type==='1099') return 0;
+  const annual=gross*52;
+  const tax=applyBrackets(annual,[[0,0],[1000,.0025],[2500,.0075],[3750,.0175],[4900,.0275],[7200,.0375],[Infinity,.0475]]);
+  return tax/52;
 }
 function applyBrackets(income, brackets) {
-  let tax = 0;
-  for(let i=1; i<brackets.length; i++) {
-    const low = brackets[i-1][0], high = brackets[i][0], rate = brackets[i][1];
-    if(income <= low) break;
-    tax += (Math.min(income, high) - low) * rate;
+  let tax=0;
+  for(let i=1;i<brackets.length;i++){
+    const low=brackets[i-1][0],high=brackets[i][0],rate=brackets[i][1];
+    if(income<=low) break;
+    tax+=(Math.min(income,high)-low)*rate;
   }
   return tax;
 }
 
-// ══════════════════════════════════════════════════════════════ JOB COSTING
-function populateCostingWeeks() {
-  const sel = document.getElementById('costingWeekSelect');
-  const cur = sel.value;
-  sel.innerHTML = '<option value="">-- Select a week --</option>' +
-    S.weeks.map(w => `<option value="${w.date}" ${cur===w.date?'selected':''}>${fmt(w.date)}</option>`).join('');
-}
-function renderCosting() {
-  const date = document.getElementById('costingWeekSelect').value;
-  const div = document.getElementById('costingContent');
-  if(!date) { div.innerHTML=''; return; }
-  const week = S.weeks.find(w => w.date === date);
-  if(!week) { div.innerHTML='<p class="empty">Week not found.</p>'; return; }
+// ══════════════════════════════ UTILS
+function exportHTML(){dl('data:text/html;charset=utf-8,'+encodeURIComponent(document.documentElement.outerHTML),'kwells-system.html');}
+function dl(href,name){const a=document.createElement('a');a.href=href;a.download=name;a.click();}
+function fmt(d){if(!d)return'';const[y,m,day]=d.split('-');return`${m}/${day}/${y}`;}
+function today(){return new Date().toISOString().split('T')[0];}
+function ej(s){return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;');}
 
-  // Aggregate by plan
-  const byPlan = {};
-  week.entries.forEach(e => {
-    if(!byPlan[e.plan]) byPlan[e.plan] = { labor:0, qty:0, employees:{} };
-    const gross = e.rate * e.qty;
-    byPlan[e.plan].labor += gross;
-    byPlan[e.plan].qty += e.qty;
-    if(!byPlan[e.plan].employees[e.emp]) byPlan[e.plan].employees[e.emp] = 0;
-    byPlan[e.plan].employees[e.emp] += gross;
-  });
-
-  const totalLabor = Object.values(byPlan).reduce((s,p)=>s+p.labor,0);
-  const insurance = week.insurance || 0;
-
-  // Summary stats
-  let totalRevenue=0, totalProfit=0;
-  const planRows = Object.entries(byPlan).map(([plan, data]) => {
-    const contract = S.contracts[plan] || 0;
-    const revenue = contract * data.qty;
-    const insAlloc = totalLabor > 0 ? (data.labor / totalLabor) * insurance : 0;
-    const totalCost = data.labor + insAlloc;
-    const profit = revenue - totalCost;
-    totalRevenue += revenue;
-    totalProfit += profit;
-    return { plan, revenue, labor:data.labor, insAlloc, totalCost, profit, qty:data.qty, contract, employees:data.employees };
-  });
-
-  div.innerHTML = `
-    <div class="stat-grid">
-      <div class="stat"><div class="val">$${totalRevenue.toFixed(2)}</div><div class="lbl">HC Revenue</div></div>
-      <div class="stat orange"><div class="val">$${totalLabor.toFixed(2)}</div><div class="lbl">Total Labor</div></div>
-      <div class="stat orange"><div class="val">$${insurance.toFixed(2)}</div><div class="lbl">WC / Insurance</div></div>
-      <div class="stat ${totalProfit>=0?'':'red'}"><div class="val">$${totalProfit.toFixed(2)}</div><div class="lbl">Est. Gross Margin</div></div>
-    </div>
-    <div class="warn-box">⚠️ Tax estimates are approximations. Consult a CPA for actual withholding obligations, especially for hybrid W2/1099 classifications.</div>
-    ${planRows.map(p => `
-      <div style="border:1px solid #e2e8f0;border-radius:8px;padding:16px;margin-bottom:14px">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-          <strong style="font-size:1rem">${p.plan}</strong>
-          <span class="badge ${p.profit>=0?'badge-green':'badge-red'}">${p.profit>=0?'Profit':'Loss'}: $${Math.abs(p.profit).toFixed(2)}</span>
-        </div>
-        <div class="pl-row"><span>HC Contract Value (${p.qty} × $${p.contract.toFixed(2)})</span><span style="color:#276749;font-weight:600">$${p.revenue.toFixed(2)}</span></div>
-        <div class="pl-row"><span>Labor Cost</span><span style="color:#c53030">-$${p.labor.toFixed(2)}</span></div>
-        <div class="pl-row"><span>WC/Insurance (allocated)</span><span style="color:#c53030">-$${p.insAlloc.toFixed(2)}</span></div>
-        <div class="pl-row total ${p.profit>=0?'profit':'loss'}">
-          <span>Gross Margin</span><span>$${p.profit.toFixed(2)}</span>
-        </div>
-        <hr class="divider">
-        <div style="font-size:.82rem;color:#718096">
-          <strong>Labor breakdown:</strong><br>
-          ${Object.entries(p.employees).map(([e,a])=>`${e}: $${a.toFixed(2)}`).join(' &nbsp;·&nbsp; ')}
-        </div>
-      </div>`).join('')}`;
-}
-
-// ══════════════════════════════════════════════════════════════ REPORTS
-function populateFilterEmp() {
-  const sel = document.getElementById('filterEmp');
-  const cur = sel.value;
-  sel.innerHTML = '<option value="">All Employees</option>' +
-    Object.keys(S.employees).map(e =>
-      `<option value="${escJ(e)}" ${cur===e?'selected':''}>${e}</option>`).join('');
-}
-function renderReports() {
-  const empF = document.getElementById('filterEmp').value;
-  const from = document.getElementById('filterFrom').value;
-  const to   = document.getElementById('filterTo').value;
-  let weeks = S.weeks;
-  if(from) weeks = weeks.filter(w => w.date >= from);
-  if(to)   weeks = weeks.filter(w => w.date <= to);
-  const div = document.getElementById('reportsContent');
-  if(!weeks.length) { div.innerHTML='<div class="card"><p class="empty">No payroll history yet.</p></div>'; return; }
-  let grandGross=0, grandTax=0, grandNet=0;
-  div.innerHTML = weeks.map(w => {
-    let entries = w.entries;
-    if(empF) entries = entries.filter(e => e.emp === empF);
-    if(!entries.length) return '';
-    const byEmp = {};
-    entries.forEach(e => {
-      if(!byEmp[e.emp]) byEmp[e.emp]={gross:0,tax:0,type:e.empType||'1099'};
-      const gross=e.rate*e.qty;
-      const empData=S.employees[e.emp]||{type:e.empType||'1099',filing:e.empFiling||'single',allowances:e.empAllowances||0};
-      const tax=empData.type==='w2'?calcFederalTax(gross,empData)+calcOKTax(gross,empData):0;
-      byEmp[e.emp].gross+=gross; byEmp[e.emp].tax+=tax;
-    });
-    const wGross=Object.values(byEmp).reduce((s,v)=>s+v.gross,0);
-    const wTax=Object.values(byEmp).reduce((s,v)=>s+v.tax,0);
-    const wNet=wGross-wTax;
-    grandGross+=wGross; grandTax+=wTax; grandNet+=wNet;
-    return `<div class="card"><div class="week-block">
-      <h3>Week ending ${fmt(w.date)} &nbsp;
-        <span class="badge badge-green">Gross: $${wGross.toFixed(2)}</span>
-        ${w.insurance?`<span class="badge badge-orange" style="margin-left:4px">Ins: $${w.insurance.toFixed(2)}</span>`:''}
-      </h3>
-      <table><thead><tr><th>Employee</th><th>Plan</th><th>Qty</th><th>Rate</th><th>Gross</th><th>Est. Tax</th><th>Net</th></tr></thead>
-      <tbody>${entries.map(e=>{
-        const gross=e.rate*e.qty;
-        const empData=S.employees[e.emp]||{type:e.empType||'1099',filing:e.empFiling||'single',allowances:e.empAllowances||0};
-        const tax=empData.type==='w2'?calcFederalTax(gross,empData)+calcOKTax(gross,empData):0;
-        return `<tr><td>${e.emp}</td><td>${e.plan}</td><td>${e.qty}</td>
-          <td>$${e.rate.toFixed(2)}</td>
-          <td style="color:#276749">$${gross.toFixed(2)}</td>
-          <td style="color:#c53030">${empData.type==='w2'?'-$'+tax.toFixed(2):'1099'}</td>
-          <td style="color:#2b6cb0">$${(gross-tax).toFixed(2)}</td></tr>`;
-      }).join('')}</tbody></table>
-    </div></div>`;
-  }).join('');
-  div.innerHTML += `<div class="card" style="background:#f0fdf4">
-    <div class="stat-grid">
-      <div class="stat"><div class="val">$${grandGross.toFixed(2)}</div><div class="lbl">Total Gross (filtered)</div></div>
-      <div class="stat red"><div class="val">$${grandTax.toFixed(2)}</div><div class="lbl">Est. Total Withholding</div></div>
-      <div class="stat blue"><div class="val">$${grandNet.toFixed(2)}</div><div class="lbl">Est. Total Net Pay</div></div>
-    </div>
-  </div>`;
-}
-function clearHistory() {
-  if(!confirm('Clear ALL payroll history? This cannot be undone.')) return;
-  S.weeks = []; save(); renderReports(); toast('History cleared.');
-}
-function exportCSV() {
-  const empF=document.getElementById('filterEmp').value;
-  const from=document.getElementById('filterFrom').value;
-  const to=document.getElementById('filterTo').value;
-  let weeks=S.weeks;
-  if(from) weeks=weeks.filter(w=>w.date>=from);
-  if(to) weeks=weeks.filter(w=>w.date<=to);
-  let rows=[['Week Ending','Employee','Type','Plan','Qty','Rate','Gross','Est Tax','Est Net']];
-  weeks.forEach(w=>{
-    let entries=w.entries;
-    if(empF) entries=entries.filter(e=>e.emp===empF);
-    entries.forEach(e=>{
-      const gross=e.rate*e.qty;
-      const empData=S.employees[e.emp]||{type:e.empType||'1099',filing:e.empFiling||'single',allowances:e.empAllowances||0};
-      const tax=empData.type==='w2'?calcFederalTax(gross,empData)+calcOKTax(gross,empData):0;
-      rows.push([w.date,e.emp,empData.type,e.plan,e.qty,e.rate.toFixed(2),gross.toFixed(2),tax.toFixed(2),(gross-tax).toFixed(2)]);
-    });
-  });
-  dl('data:text/csv;charset=utf-8,'+encodeURIComponent(rows.map(r=>r.map(v=>`"${v}"`).join(',')).join('\n')),'kwells_payroll.csv');
-  toast('CSV exported!');
-}
-
-// ══════════════════════════════════════════════════════════════ EXPORT / UTILS
-function exportHTML() {
-  dl('data:text/html;charset=utf-8,'+encodeURIComponent(document.documentElement.outerHTML),'kwells-payroll.html');
-  toast('HTML exported!');
-}
-function dl(href, name) { const a=document.createElement('a'); a.href=href; a.download=name; a.click(); }
-function fmt(d) { if(!d) return ''; const [y,m,day]=d.split('-'); return `${m}/${day}/${y}`; }
-function escJ(s) { return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
-function printSummary() { window.print(); }
-
-// ══════════════════════════════════════════════════════════════ INIT
-document.getElementById('weekDate').value = new Date().toISOString().split('T')[0];
-renderEntryTable();
+// ══════════════════════════════ INIT
+document.getElementById('weekDate').value=today();
+renderDashboard();
+renderSetup();
 </script>
 </body>
 </html>
